@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <style id="obs-transparent-critical">html,body{background:transparent!important;background-color:rgba(0,0,0,0)!important;}</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>document.documentElement.classList.add("obs");</script>
+  <title>치지직 채팅 오버레이</title>
+  <style>
+    @font-face {
+      font-family: 'Mulmaru';
+      src: url('fonts/Mulmaru.woff2') format('woff2'), url('fonts/Mulmaru.ttf') format('truetype');
+      font-weight: normal; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'DungGeunMo';
+      src: local('DungGeunMo'),
+           url('fonts/dunggeunmo/DungGeunMo.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'JeonjuWanpanbonGakR';
+      src: url('fonts/jeonju/JeonjuWanpanbonGak-L.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'JeonjuWanpanbonGakR';
+      src: url('fonts/jeonju/JeonjuWanpanbonGak-R.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'JeonjuWanpanbonGakR';
+      src: url('fonts/jeonju/JeonjuWanpanbonGak-R.ttf') format('truetype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'OmyuPretty';
+      src: url('fonts/omyu/OmyuPretty.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'SingleDay';
+      src: local('SingleDay'),
+           url('fonts/singleday/SingleDay-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'OnglipNukka';
+      src: local('온글잎 누카'),
+           url('fonts/nukka/OnglipNukka.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MonaS12';
+      src: url('fonts/monas/MonaS12.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MonaS12';
+      src: local('MonaS12TextKR'),
+           url('fonts/monas/MonaS12TextKR.ttf') format('truetype');
+      unicode-range: U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'CookieRun';
+      src: local('CookieRun Bold'), url('fonts/cookie/CookieRun Bold.ttf') format('truetype'),
+           url('fonts/cookie/CookieRun Bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'CookieRun';
+      src: local('CookieRun Regular'), url('fonts/cookie/CookieRun Regular.ttf') format('truetype'),
+           url('fonts/cookie/CookieRun Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'CookieRun';
+      src: local('CookieRun Black'), url('fonts/cookie/CookieRun Black.ttf') format('truetype'),
+           url('fonts/cookie/CookieRun Black.otf') format('opentype');
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    body {
+      margin: 0;
+      overflow: hidden;
+      min-height: 100vh;
+      font-family: var(--custom-chat-font-primary, "OmyuPretty"), "Malgun Gothic", sans-serif !important;
+      font-size: var(--custom-chat-font-size, 30px);
+      font-weight: 500;
+      text-shadow: var(--custom-chat-text-shadow, none);
+      -webkit-text-stroke: var(--custom-chat-text-stroke-width, 0) var(--custom-chat-text-stroke-color, transparent);
+      paint-order: stroke fill;
+      color: var(--custom-chat-text-color, #5a4f76);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: geometricPrecision;
+    }
+    #chat_container,
+    #chat_container * {
+      font-family: inherit !important;
+    }
+    #chat_container:not(.chat-board-on) {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: transparent;
+      background-color: transparent;
+    }
+    #chat_status.chat-status,
+    .chat-status {
+      display: none;
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: var(--custom-chat-panel-width, var(--custom-chat-max-width, 640px));
+    }
+    .chat-status:not(:empty) { display: block !important; }
+    body.show-ui #conn_badge { display: block !important; position: fixed; top: 8px; right: 10px; font-size: 13px; z-index: 9; }
+    #conn_badge { display: none !important; }
+    #conn_badge.ok { color: #4ade80; }
+    #conn_badge.wait { color: #fbbf24; }
+    #conn_badge.err { color: #f87171; }
+    .chat-status--error { color: #f87171; }
+    .chat-item {
+      position: relative;
+      animation: var(--custom-chat-anim, slideIn 0.4s ease-out forwards);
+      word-break: break-all;
+      overflow-wrap: anywhere;
+      line-break: anywhere;
+      overflow: visible;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      isolation: isolate;
+    }
+    .chat-item > * { position: relative; z-index: 1; }
+    body.game-mode .chat-item {
+      background: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      --chat-item-pad-top: 6px;
+      --chat-item-pad-x: 4px;
+      --chat-item-pad-bottom: 6px;
+      --chat-item-pad-left: 4px;
+      --chat-paw-inset-left: 4px;
+      min-height: 0;
+    }
+    body.game-mode .chat-item::before,
+    body.game-mode .chat-item::after {
+      display: none !important;
+    }
+    body.no-anim .chat-item { animation: none; }
+    .chat-nickname {
+      margin-right: 8px;
+      font-weight: 500;
+      color: var(--custom-chat-nick-color, #7a6a9c);
+    }
+    .chat-content--nick-above .chat-nickname {
+      margin-right: 0;
+    }
+    .chat-nickname.plain { color: var(--custom-chat-nick-color, #7a6a9c); }
+    .chat-emote {
+      width: 52px; height: 52px; min-width: 52px; min-height: 52px;
+      vertical-align: middle; margin: 0 3px; object-fit: contain;
+      image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;
+    }
+    .chat-custom-trigger-img {
+      height: 110px; max-width: 220px;
+      vertical-align: middle; margin: 0 3px; object-fit: contain;
+      display: inline-block;
+    }
+    .chat-trigger-img-grid {
+      display: inline-flex; flex-wrap: wrap;
+      align-items: center; justify-content: flex-start;
+      gap: 4px; vertical-align: middle;
+    }
+    .chat-trigger-img-grid .chat-custom-trigger-img { margin: 0; }
+    .file-protocol-notice {
+      padding: 20px 24px; max-width: 420px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px; font-size: 15px; line-height: 1.6; color: #e5e5e5;
+    }
+    .file-protocol-notice strong { color: #fbbf24; }
+    .file-protocol-notice code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateX(-8px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    body.bubble-theme-hacking .chat-item {
+      animation: var(--custom-chat-anim, hackingFadeIn 0.32s ease-out forwards);
+    }
+    html {
+      background: transparent !important;
+      background-color: rgba(0, 0, 0, 0) !important;
+    }
+    html.obs,
+    html.obs body {
+      background: transparent !important;
+      background-color: rgba(0, 0, 0, 0) !important;
+    }
+    body.obs {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-start;
+      height: 100vh;
+      overflow: hidden;
+      background: transparent !important;
+      background-color: rgba(0, 0, 0, 0) !important;
+    }
+    body.obs #chat_container:not(.chat-board-on) {
+      background: transparent !important;
+      background-color: rgba(0, 0, 0, 0) !important;
+    }
+    body.obs.bubble-theme-magical #chat_container:not(.chat-board-on) {
+      /* 말풍선 위 미니 리본 장식(top:-14px)이 잘리지 않도록 */
+      overflow: visible !important;
+      padding-top: 18px;
+    }
+    body.obs #chat_container {
+      flex-shrink: 0;
+      width: min(100%, var(--custom-chat-panel-width, var(--custom-chat-max-width, 640px)));
+      max-height: var(--custom-chat-panel-height, 100vh);
+      height: var(--custom-chat-panel-height, auto);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    body.obs #chat_container.chat-board-on {
+      justify-content: flex-start;
+      height: var(--custom-chat-panel-height, 1000px);
+      min-height: var(--custom-chat-panel-height, 1000px);
+      max-height: var(--custom-chat-panel-height, 1000px);
+      overflow: hidden;
+    }
+    body.obs.bubble-theme-animal #chat_container.chat-board-on {
+      overflow: visible !important;
+      margin-top: 90px;
+      max-height: none;
+    }
+    body.obs.bubble-theme-magical #chat_container.chat-board-on {
+      overflow: visible !important;
+      /* 리본 장식(top:-20px, height:52px)이 잘리지 않도록 여유 확보 */
+      margin-top: 40px;
+      max-height: none;
+    }
+    body.obs #chat_container > .chat-messages-stack {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .chat-messages-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+      min-width: 0;
+      width: 100%;
+      flex: 1 1 auto;
+      overflow: hidden;
+      justify-content: flex-end;
+    }
+    body.show-ui.has-page-bg,
+    html body.show-ui.has-page-bg {
+      background: var(--custom-chat-page-bg, transparent) !important;
+      background-color: var(--custom-chat-page-bg, transparent) !important;
+    }
+  </style>
+  <link rel="stylesheet" href="css/chat-bubble.css?v=1">
+</head>
+<body class="bubble-theme-pastel obs">
+  <script>document.body.classList.add("obs");</script>
+  <div id="conn_badge" class="wait">연결 중…</div>
+  <div id="chat_container">
+    <div class="chat-board-title" id="chat_board_title" aria-hidden="true"></div>
+    <div class="chat-messages-stack" id="chat_messages_stack"></div>
+  </div>
+  <div id="chat_status" class="chat-status" aria-live="polite"></div>
+  <script src="js/channel-settings.js?v=1"></script>
+  <script src="js/bangsong-channel-storage.js?v=1"></script>
+  <script src="js/chzzk-live-status.js?v=2"></script>
+  <script src="js/chzzk-config.js?v=1"></script>
+  <script src="assets/magical-theme-vars.js?v=1"></script>
+  <script src="assets/animal-theme-vars.js?v=1"></script>
+  <script src="js/overlay.js?v=1"></script>
+</body>
+</html>

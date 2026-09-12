@@ -1,0 +1,4495 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>치지직 채팅 오버레이 설정</title>
+  <link rel="preload" href="fonts/Mulmaru.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face {
+      font-family: 'Mulmaru';
+      src: url('fonts/Mulmaru.woff2') format('woff2'), url('fonts/Mulmaru.ttf') format('truetype');
+      font-weight: normal; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'DungGeunMo';
+      src: local('DungGeunMo'),
+           url('fonts/dunggeunmo/DungGeunMo.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'JeonjuWanpanbonGakR';
+      src: url('fonts/jeonju/JeonjuWanpanbonGak-L.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'JeonjuWanpanbonGakR';
+      src: url('fonts/jeonju/JeonjuWanpanbonGak-R.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'JeonjuWanpanbonGakR';
+      src: url('fonts/jeonju/JeonjuWanpanbonGak-R.ttf') format('truetype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'OmyuPretty';
+      src: url('fonts/omyu/OmyuPretty.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'SingleDay';
+      src: local('SingleDay'),
+           url('fonts/singleday/SingleDay-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'OnglipNukka';
+      src: local('온글잎 누카'),
+           url('fonts/nukka/OnglipNukka.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MonaS12';
+      src: url('fonts/monas/MonaS12.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MonaS12';
+      src: local('MonaS12TextKR'),
+           url('fonts/monas/MonaS12TextKR.ttf') format('truetype');
+      unicode-range: U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'CookieRun';
+      src: local('CookieRun Bold'), url('fonts/cookie/CookieRun Bold.ttf') format('truetype'),
+           url('fonts/cookie/CookieRun Bold.otf') format('opentype');
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'CookieRun';
+      src: local('CookieRun Regular'), url('fonts/cookie/CookieRun Regular.ttf') format('truetype'),
+           url('fonts/cookie/CookieRun Regular.otf') format('opentype');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    :root {
+      --bg: #0a0a0a; --surface: #171717; --text: #e5e5e5; --text-muted: #737373;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Mulmaru', sans-serif; }
+    body {
+      background: var(--bg); color: var(--text); min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,255,255,0.03), transparent 60%);
+    }
+    .layout { display: flex; min-height: 100vh; }
+    .main { flex: 1; margin-left: 0; padding: 2rem; }
+    .page-title { font-size: clamp(1.75rem, 5vw, 2.25rem); margin-bottom: 0.5rem; }
+    .lead { color: var(--text-muted); font-size: 0.95rem; line-height: 1.65; max-width: 720px; margin-bottom: 1.5rem; }
+    .note {
+      font-size: 0.88rem; color: var(--text-muted); line-height: 1.55;
+      padding: 0.85rem 1rem; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; max-width: 720px; margin-bottom: 1.5rem;
+    }
+    .note a { color: #93c5fd; }
+    .grid { display: grid; gap: 1.25rem; max-width: 960px; }
+    .chat-page-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 1.25rem;
+      align-items: start;
+      max-width: 1280px;
+    }
+    .chat-page-main { min-width: 0; }
+    .preset-sidebar {
+      position: sticky;
+      top: 1rem;
+      padding: 1.1rem 1.15rem;
+    }
+    .preset-sidebar > h2 {
+      font-size: 1rem;
+      color: #a3a3a3;
+      margin: 0 0 1rem;
+      font-weight: normal;
+    }
+    .preset-slot-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.35rem;
+    }
+    .preset-slot {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.65rem 0.7rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      color: inherit;
+      font: inherit;
+    }
+    .preset-slot:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+    .preset-slot.active {
+      border-color: #b8a8e8;
+      background: rgba(124, 92, 191, 0.28);
+    }
+    .preset-slot.is-empty {
+      opacity: 0.82;
+    }
+    .preset-slot-num {
+      flex-shrink: 0;
+      width: 1.65rem;
+      height: 1.65rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #e8dcff;
+      background: rgba(124, 92, 191, 0.35);
+      border: 1px solid rgba(184, 168, 232, 0.35);
+    }
+    .preset-slot.is-empty .preset-slot-num {
+      color: #a3a3a3;
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .preset-slot-body { flex: 1; min-width: 0; }
+    .preset-slot-title {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #e5e5e5;
+    }
+    .preset-slot-meta {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+      word-break: break-all;
+    }
+    .preset-slot-clear {
+      flex-shrink: 0;
+      padding: 0.15rem 0.4rem;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: #fca5a5;
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0.75;
+    }
+    .preset-slot-clear:hover {
+      opacity: 1;
+      background: rgba(248, 113, 113, 0.12);
+    }
+    .preset-slot-clear:disabled {
+      opacity: 0.25;
+      cursor: default;
+      pointer-events: none;
+    }
+    .btn-preset-save {
+      width: 100%;
+      margin-top: 0.65rem;
+      background: rgba(124, 92, 191, 0.45);
+      border-color: #b8a8e8;
+      color: #e8dcff;
+    }
+    .btn-preset-save:hover {
+      background: rgba(124, 92, 191, 0.62);
+    }
+    @media (max-width: 1100px) {
+      .chat-page-layout { grid-template-columns: 1fr; }
+      .preset-sidebar { position: static; max-width: 960px; }
+      .preset-slot-list { max-height: none; }
+    }
+    .panel {
+      background: rgba(20,20,24,0.7); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 1.25rem 1.5rem;
+    }
+    .panel h2 { font-size: 1rem; color: #a3a3a3; margin-bottom: 1.25rem; font-weight: normal; }
+    .panel h3 { font-size: 0.92rem; color: #c4c4c4; margin: 1.85rem 0 1rem; font-weight: 600; letter-spacing: 0.02em; line-height: 1.5; }
+    .panel h3.settings-group {
+      padding-top: 1.35rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .panel h3.settings-group:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .field { margin-bottom: 1.5rem; }
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      line-height: 1.55;
+    }
+    .field input[type="number"], .field input[type="text"], .field select {
+      padding: 0.6rem 0.75rem;
+      min-height: 2.75rem;
+      line-height: 1.55;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.35); color: var(--text); font-size: 0.9rem;
+      font-family: inherit;
+    }
+    .field select option {
+      font-family: 'Mulmaru', sans-serif;
+    }
+
+    .color-preset-field { margin-top: 0.25rem; margin-bottom: 1.25rem; }
+    .color-preset-row {
+      max-width: 580px;
+    }
+    .color-preset-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      min-width: 0;
+    }
+    .color-preset-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.22);
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+    }
+    .color-preset-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+    .color-preset-btn.active {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28), inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+      transform: translateY(-1px);
+    }
+    .color-preset-btn.color-preset-reset {
+      background: rgba(255, 255, 255, 0.06);
+      color: #e5e5e5;
+      font-family: 'Mulmaru', sans-serif;
+      font-size: 0.68rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .color-preset-btn.color-preset-reset:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .opt-collapsible {
+      margin-bottom: 1.1rem;
+    }
+    .opt-collapsible-head {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      width: 100%;
+      padding: 0;
+      margin: 0 0 0.5rem;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.85rem;
+      line-height: 1.55;
+      text-align: left;
+      cursor: pointer;
+      user-select: none;
+    }
+    .opt-collapsible-head:hover {
+      color: #d4d4d4;
+    }
+    .opt-collapsible-title {
+      flex: 0 1 auto;
+    }
+    .opt-collapsible-arrow {
+      flex-shrink: 0;
+      font-size: 0.95rem;
+      color: #a3a3a3;
+      transition: transform 0.15s ease;
+      line-height: 1;
+    }
+    .opt-collapsible.is-open .opt-collapsible-arrow {
+      transform: rotate(90deg);
+    }
+    .opt-collapsible-panel {
+      display: none;
+    }
+    .opt-collapsible.is-open .opt-collapsible-panel {
+      display: block;
+    }
+    .settings-section.opt-collapsible {
+      margin-bottom: 1.5rem;
+    }
+    .settings-section-head {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      width: 100%;
+      padding: 1.35rem 0 1rem;
+      margin: 0;
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: none;
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: #c4c4c4;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+      text-align: left;
+      cursor: pointer;
+      user-select: none;
+    }
+    .settings-section-head:hover {
+      color: #e0e0e0;
+    }
+    .settings-section-head .opt-collapsible-title {
+      flex: 0 1 auto;
+    }
+    .settings-section-head .opt-collapsible-arrow {
+      font-size: 1.05rem;
+      color: #b0b0b0;
+    }
+    .settings-section.is-open .settings-section-head {
+      padding-bottom: 0.75rem;
+    }
+    .settings-section-body .check:last-child {
+      margin-bottom: 0.35rem;
+    }
+    .settings-section .settings-section-body > .field-row:last-child,
+    .settings-section .settings-section-body > .field:last-child,
+    .settings-section .settings-section-body > p.field-hint:last-child {
+      margin-bottom: 0;
+    }
+    .opt-collapsible-panel > select {
+      width: 100%;
+      max-width: 280px;
+      padding: 0.6rem 0.75rem;
+      min-height: 2.75rem;
+      line-height: 1.55;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.35);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+    .opt-collapsible-panel > select option {
+      font-family: 'Mulmaru', sans-serif;
+    }
+    .theme-primary-field {
+      margin-bottom: 1.25rem;
+    }
+    .theme-primary-field select {
+      width: 100%;
+      max-width: 280px;
+    }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .field input[type="number"], .field input[type="text"], .field select { width: 100%; max-width: 280px; }
+    .color-picker {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      max-width: 280px;
+    }
+    .color-picker-swatch {
+      position: relative;
+      display: block;
+      width: 44px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.22);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+      cursor: pointer;
+      overflow: hidden;
+      background-color: rgba(0, 0, 0, 0.35);
+    }
+    .color-picker-swatch input[type="color"] {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      border: none;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .color-picker-fill {
+      display: block;
+      position: absolute;
+      inset: 0;
+      border-radius: 6px;
+      pointer-events: none;
+      background-color: #000000;
+    }
+    .field input[type="range"] { width: 100%; max-width: 280px; margin-top: 0.15rem; }
+    .field-row { display: flex; flex-wrap: wrap; gap: 1.35rem 2rem; margin-bottom: 1.5rem; }
+    .theme-font-row > .field {
+      flex: 1 1 220px;
+      min-width: 0;
+      margin-bottom: 0;
+    }
+    .theme-font-row select {
+      max-width: none;
+      width: 100%;
+    }
+    .field-row > .field { margin-bottom: 0; }
+
+    .field-row > .field,
+    .panel .field.field-inline,
+    .theme-font-row > .field {
+      display: grid;
+      grid-template-columns: minmax(5.75rem, 9.25rem) minmax(0, 1fr);
+      align-items: center;
+      column-gap: 0.85rem;
+      row-gap: 0.25rem;
+    }
+    .field-row.field-row-4 > .field {
+      grid-template-columns: minmax(3.25rem, 4.75rem) minmax(0, 1fr);
+    }
+    .settings-subgroup .field-row:not(.field-row-4) > .field {
+      grid-template-columns: minmax(6.5rem, 10.5rem) minmax(0, 1fr);
+    }
+    .field-row > .field > label:first-of-type:not(.color-picker-swatch):not(.check),
+    .panel .field.field-inline > label:first-of-type:not(.color-picker-swatch),
+    .theme-font-row > .field > label:first-of-type {
+      margin-bottom: 0;
+      grid-column: 1;
+      grid-row: 1;
+      align-self: center;
+    }
+    .field-row > .field > input:not([type="color"]),
+    .field-row > .field > select,
+    .field-row > .field > .btn,
+    .field-row > .field > .color-picker,
+    .field-row > .field > input[type="range"],
+    .panel .field.field-inline > input:not([type="color"]),
+    .panel .field.field-inline > select,
+    .panel .field.field-inline > .btn,
+    .panel .field.field-inline > .color-picker,
+    .theme-font-row > .field > select {
+      grid-column: 2;
+      grid-row: 1;
+      width: 100%;
+      max-width: none;
+    }
+    .field-row > .field > .range-val,
+    .panel .field.field-inline > .range-val {
+      grid-column: 2;
+      grid-row: 2;
+      margin-top: 0;
+    }
+    .field-row > .field > .field-hint,
+    .panel .field.field-inline > .field-hint,
+    .theme-font-row > .field > .field-hint {
+      grid-column: 1 / -1;
+      margin-top: 0.15rem;
+    }
+    .field-row.field-row-4 > .field > label:first-of-type {
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+    .field.field-game-mode {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+    .field.field-game-mode .btn-game-mode {
+      flex-shrink: 0;
+      width: auto;
+      padding: 0.36rem 0.72rem;
+      font-size: 0.82rem;
+    }
+    .field.field-game-mode .field-hint {
+      margin-top: 0;
+      margin-bottom: 0;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    #nick_color_settings > .field {
+      flex: 1 1 200px;
+      min-width: 0;
+      max-width: 280px;
+    }
+    #nick_color_settings > .field > .btn {
+      width: 100%;
+      white-space: nowrap;
+      font-size: 0.82rem;
+    }
+
+    .field-row.field-row-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .field-row.field-row-4 > .field {
+      min-width: 0;
+      margin-bottom: 0;
+    }
+    .field-row.field-row-4 input[type="number"],
+    .field-row.field-row-4 input[type="text"],
+    .field-row.field-row-4 select {
+      max-width: none;
+    }
+    .field-row.field-row-4 .color-picker {
+      max-width: 100%;
+    }
+    .field-row.field-row-4 input[type="range"] {
+      max-width: none;
+    }
+    .field-row.field-row-4 > .field > .btn {
+      width: 100%;
+      white-space: nowrap;
+      font-size: 0.82rem;
+    }
+    .check { display: flex; align-items: center; gap: 0.45rem; font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.85rem; line-height: 1.45; }
+    .check input { width: 16px; height: 16px; }
+    .field-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.5; }
+    .settings-subgroup {
+      margin: 0 0 1.5rem;
+      padding: 1rem 1.1rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.18);
+    }
+    .settings-subgroup-title {
+      margin: 0 0 0.35rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #d4d4d4;
+    }
+    .settings-subgroup-desc {
+      margin: 0 0 0.85rem;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.65rem;
+      margin-bottom: 0.85rem;
+    }
+    .range-val { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.4rem; }
+    .btn {
+      padding: 0.45rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06); color: var(--text); cursor: pointer; font-size: 0.88rem;
+    }
+    .panel .field + .btn,
+    .panel .field-row + .btn { margin-top: 0.15rem; margin-bottom: 1.35rem; }
+    .panel .obs-url + .btn { margin-top: 0.85rem; margin-bottom: 0; }
+    .copy-status {
+      margin: 0.55rem 0 0;
+      font-size: 0.82rem;
+      color: #a3e635;
+      min-height: 1.2em;
+    }
+    .copy-status.is-error { color: #fca5a5; }
+    .btn:hover { background: rgba(255,255,255,0.1); }
+    .btn-game-mode.active,
+    .btn-nick-colors.active,
+    .btn-paw.active,
+    .btn-box-border.active,
+    .btn-theme-chat-bg.active {
+      background: rgba(124, 92, 191, 0.45);
+      border-color: #b8a8e8;
+      color: #e8dcff;
+    }
+    .btn-preset-danger {
+      border-color: rgba(248, 113, 113, 0.35);
+      color: #fca5a5;
+    }
+    .btn-preset-danger:hover {
+      background: rgba(248, 113, 113, 0.12);
+    }
+    .preset-status {
+      font-size: 0.82rem;
+      color: #86efac;
+      margin: 0 0 0.85rem;
+      min-height: 1.25em;
+    }
+    .preset-status.is-error { color: #fca5a5; }
+    .obs-url-head {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+    }
+    .obs-url-head h2 { margin-bottom: 0; }
+    .obs-open-link {
+      font-size: 0.88rem;
+      color: #93c5fd;
+      text-decoration: none;
+    }
+    .obs-open-link:hover { text-decoration: underline; }
+    .obs-url {
+      display: block;
+      width: 100%;
+      max-width: 720px;
+      margin-top: 0.5rem;
+      padding: 0.65rem 0.75rem;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+      color: #93c5fd;
+      word-break: break-all;
+      cursor: text;
+    }
+    .obs-url:focus {
+      outline: none;
+      border-color: rgba(147, 197, 253, 0.45);
+    }
+    .preview-wrap {
+      --preview-checker:
+        linear-gradient(45deg, #252525 25%, transparent 25%),
+        linear-gradient(-45deg, #252525 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #252525 75%),
+        linear-gradient(-45deg, transparent 75%, #252525 75%);
+      background-color: #1a1a1a;
+      background-image: var(--preview-checker);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      border-radius: 12px; overflow: visible;
+      border: 1px solid rgba(255,255,255,0.1); min-height: 280px;
+      padding: 14px;
+      font-family: var(--custom-chat-font-primary, "OmyuPretty"), "Malgun Gothic", sans-serif !important;
+      font-size: var(--custom-chat-font-size, 30px);
+      font-weight: 500;
+      color: var(--custom-chat-text-color, #5a4f76);
+      text-shadow: var(--custom-chat-text-shadow, none);
+      -webkit-text-stroke: var(--custom-chat-text-stroke-width, 0) var(--custom-chat-text-stroke-color, transparent);
+      paint-order: stroke fill;
+    }
+    .preview-wrap * {
+      font-family: inherit !important;
+      font-size: inherit;
+      color: inherit;
+      text-shadow: inherit;
+      -webkit-text-stroke: inherit;
+      paint-order: inherit;
+    }
+    .preview-wrap,
+    .preview-wrap .preview-static,
+    .preview-wrap .chat-board-title,
+    .preview-wrap .chat-messages-stack,
+    .preview-wrap .chat-item,
+    .preview-wrap .chat-content,
+    .preview-wrap .chat-nickname,
+    .preview-wrap .chat-message-text {
+      font-family: var(--custom-chat-font-primary, "OmyuPretty"), "Malgun Gothic", sans-serif;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-hacking {
+      padding: 14px 12px 12px 14px;
+      min-height: 280px;
+      overflow: visible !important;
+      box-sizing: border-box;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-hacking.hacking-tilt-left,
+    .preview-wrap.preview-chat-board-on.bubble-theme-hacking.hacking-tilt-right {
+      overflow: hidden !important;
+      padding: 18px 14px 16px 18px;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-hacking .preview-static {
+      width: fit-content !important;
+      max-width: 82% !important;
+      margin: 0;
+      overflow: hidden !important;
+      flex-shrink: 1;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-hacking.hacking-tilt-left .preview-static,
+    .preview-wrap.preview-chat-board-on.bubble-theme-hacking.hacking-tilt-right .preview-static {
+      width: fit-content !important;
+      max-width: 78% !important;
+      margin: 0;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-hacking .preview-static > .chat-board-title--show {
+      padding-top: 2px !important;
+      margin-bottom: 6px !important;
+    }
+    .preview-wrap[style*="--custom-chat-panel-height"].preview-chat-board-on.bubble-theme-hacking {
+      overflow: visible !important;
+      box-sizing: border-box;
+    }
+    .preview-wrap[style*="--custom-chat-panel-height"].preview-chat-board-on.bubble-theme-hacking .preview-static {
+      flex: 0 1 auto;
+      max-height: calc(100% - 18px);
+      overflow: hidden !important;
+    }
+    .preview-wrap.preview-chat-board-on {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 16px 12px 12px;
+      box-sizing: border-box;
+      min-height: var(--custom-chat-panel-height, 1000px);
+      max-height: none;
+      overflow: visible;
+    }
+    .preview-wrap.preview-chat-board-on .preview-static {
+      overflow: hidden !important;
+    }
+    .preview-wrap.preview-chat-board-on .preview-static > .chat-board-title--show {
+      flex-shrink: 0;
+      overflow: visible;
+      line-height: 1.35;
+      padding-top: 4px;
+      -webkit-text-stroke: 0 transparent !important;
+      paint-order: normal !important;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-xp .preview-static > .chat-board-title--show {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      line-height: 1 !important;
+      padding-top: 0 !important;
+      min-height: 0;
+      transform: translateY(-1px);
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-pastel .preview-static {
+      padding-top: 26px !important;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-neon .preview-static {
+      padding-top: 22px !important;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-magical {
+      padding-top: 36px;
+      overflow: visible !important;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-magical .preview-static,
+    .preview-wrap.preview-chat-board-on.bubble-theme-magical .preview-static.chat-board-on {
+      overflow: visible !important;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-animal {
+      padding-top: 56px;
+      overflow: visible !important;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-animal .preview-static,
+    .preview-wrap.preview-chat-board-on.bubble-theme-animal .preview-static.chat-board-on {
+      overflow: visible !important;
+    }
+    .preview-wrap.preview-chat-board-on .preview-static.chat-board-on {
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .preview-wrap.preview-chat-board-on .preview-static {
+      width: min(100%, var(--custom-chat-panel-width, var(--custom-chat-max-width, 640px))) !important;
+      max-width: var(--custom-chat-panel-width, var(--custom-chat-max-width, 640px)) !important;
+      min-width: 0 !important;
+      flex-shrink: 0;
+      margin: 0;
+    }
+    .preview-wrap.preview-chat-board-on .preview-static > .chat-messages-stack {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      justify-content: flex-end;
+      overflow: hidden;
+      min-height: 0;
+      flex: 1 1 auto;
+    }
+    .preview-wrap.preview-chat-board-on .preview-static > .chat-messages-stack > .chat-item-shell {
+      width: auto;
+      max-width: var(--custom-chat-max-width, 640px) !important;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .preview-wrap .chat-item {
+      position: relative;
+      word-break: break-all;
+      overflow-wrap: anywhere;
+      line-break: anywhere;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      isolation: isolate;
+    }
+    .preview-wrap .chat-item > * { position: relative; z-index: 1; }
+    .preview-wrap .preview-static.chat-board-on,
+    .preview-wrap .preview-static:not(.chat-board-on) {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 0;
+    }
+    .preview-wrap .preview-static:not(.chat-board-on) {
+      width: min(100%, var(--custom-chat-panel-width, var(--custom-chat-max-width, 640px)));
+      max-width: var(--custom-chat-panel-width, var(--custom-chat-max-width, 640px));
+    }
+    .preview-wrap[style*="--custom-chat-panel-height"] {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+    .preview-wrap[style*="--custom-chat-panel-height"] .preview-static {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .preview-wrap[style*="--custom-chat-panel-height"] .preview-static > .chat-board-title--show {
+      flex-shrink: 0;
+      padding-top: 4px;
+    }
+    .preview-wrap[style*="--custom-chat-panel-height"] .preview-messages-stack,
+    .preview-wrap[style*="--custom-chat-panel-height"] .chat-messages-stack {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      justify-content: flex-start;
+    }
+    .preview-wrap.preview-game-mode .chat-item,
+    .preview-wrap.preview-game-mode .preview-chat-item {
+      background: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 6px 4px !important;
+      min-height: 0 !important;
+    }
+    .preview-wrap.preview-game-mode .chat-item::before,
+    .preview-wrap.preview-game-mode .chat-item::after,
+    .preview-wrap.preview-game-mode .preview-chat-item::before,
+    .preview-wrap.preview-game-mode .preview-chat-item::after { display: none !important; }
+    .preview-chat-item {
+      position: relative;
+      word-break: break-all;
+      overflow-wrap: anywhere;
+      line-break: anywhere;
+      overflow: visible;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      isolation: isolate;
+    }
+    .preview-chat-item > * { position: relative; z-index: 1; }
+    .preview-nick {
+      margin-right: 8px;
+      font-weight: 500;
+      color: var(--custom-chat-nick-color, #7a6a9c);
+    }
+    .preview-wrap.preview-hide-nick .preview-nick,
+    .preview-wrap.preview-hide-nick .chat-nickname,
+    .preview-wrap.preview-hide-nick .preview-sep { display: none; }
+    .preview-wrap .chat-nickname {
+      margin-right: 8px;
+      font-weight: 500;
+      color: var(--custom-chat-nick-color, #7a6a9c);
+    }
+    .preview-wrap.preview-nick-above .preview-sep { display: none; }
+    .preview-wrap.preview-page-filled {
+      background-image: none;
+      background-color: var(--preview-page-bg, #1a1a1a);
+    }
+    .compare { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.5; }
+    .compare code { background: rgba(255,255,255,0.08); padding: 0.1rem 0.35rem; border-radius: 4px; }
+    .steps { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; }
+    .steps strong { color: var(--text); }
+  </style>
+  <link rel="stylesheet" href="css/chat-bubble.css?v=1">
+  <style id="preview-layout-fix">
+    /* 배경판 높이 고정 — 채팅만 안에서 쌓임 (판이 늘어나지 않음) */
+    .preview-wrap.preview-chat-board-on .preview-static {
+      overflow: hidden !important;
+      height: var(--custom-chat-panel-height, 1000px) !important;
+      min-height: var(--custom-chat-panel-height, 1000px) !important;
+      max-height: var(--custom-chat-panel-height, 1000px) !important;
+      flex: 0 0 auto !important;
+      box-sizing: border-box !important;
+    }
+    .preview-wrap.preview-chat-board-on .preview-static > .chat-messages-stack,
+    .preview-wrap.preview-chat-board-on .preview-static > .preview-messages-stack {
+      min-height: 0 !important;
+      flex: 1 1 auto !important;
+      justify-content: flex-end !important;
+      overflow: hidden !important;
+    }
+    .preview-wrap.preview-chat-board-on .preview-static > .chat-board-title--show {
+      padding-top: 8px !important;
+      margin-bottom: 4px !important;
+      flex-shrink: 0 !important;
+    }
+    .preview-wrap.preview-chat-board-on.bubble-theme-pastel .preview-static {
+      padding-top: 32px !important;
+    }
+    .preview-wrap[style*="--custom-chat-panel-height"].preview-chat-board-on .preview-static > .chat-messages-stack,
+    .preview-wrap[style*="--custom-chat-panel-height"].preview-chat-board-on .preview-static > .preview-messages-stack {
+      flex: 1 1 auto !important;
+      justify-content: flex-end !important;
+      overflow: hidden !important;
+    }
+
+    /* 채팅 좌우 ON — 미리보기도 OBS와 동일하게 좌·우 정렬 */
+    .preview-wrap.preview-chat-alternate .preview-static > .chat-messages-stack,
+    .preview-wrap.preview-chat-alternate .preview-static > .preview-messages-stack {
+      width: 100% !important;
+      align-items: stretch !important;
+    }
+
+    .preview-wrap.preview-chat-alternate .preview-static > .chat-messages-stack > .chat-item-shell,
+    .preview-wrap.preview-chat-alternate .preview-static > .preview-messages-stack > .chat-item-shell {
+      width: auto !important;
+      max-width: min(88%, var(--custom-chat-max-width, 640px)) !important;
+    }
+
+    .preview-wrap.preview-chat-alternate .preview-static > .chat-messages-stack > .chat-item-shell.chat-side-left,
+    .preview-wrap.preview-chat-alternate .preview-static > .preview-messages-stack > .chat-item-shell.chat-side-left {
+      align-self: flex-start !important;
+    }
+
+    .preview-wrap.preview-chat-alternate .preview-static > .chat-messages-stack > .chat-item-shell.chat-side-right,
+    .preview-wrap.preview-chat-alternate .preview-static > .preview-messages-stack > .chat-item-shell.chat-side-right {
+      align-self: flex-end !important;
+    }
+
+    .preview-wrap.preview-chat-alternate .chat-item,
+    .preview-wrap.preview-chat-alternate .preview-chat-item {
+      width: auto !important;
+      max-width: 100% !important;
+    }
+  </style>
+  <link rel="stylesheet" href="css/bangsong-dialog.css?v=1">
+  <script src="js/bangsong-dialog.js?v=1"></script>
+  <link rel="stylesheet" href="css/channel-settings.css?v=1">
+</head>
+<body>
+  <div class="layout">
+    <main class="main">
+      <section class="channel-settings-panel" aria-label="채팅 연결">
+        <h2>채팅 연결</h2>
+        <p class="channel-settings-lead">
+          치지직 채팅/방송 URL을 입력하면 채널을 자동으로 인식합니다. 로그인은 필요하지 않습니다.<br>
+          예: <code>https://chzzk.naver.com/chat/채널ID</code>, <code>https://chzzk.naver.com/live/채널ID</code>
+        </p>
+        <div class="channel-settings-row">
+          <input type="text" id="channel_url_input" placeholder="https://chzzk.naver.com/chat/채널ID" autocomplete="off">
+          <button type="button" id="channel_url_save">연결</button>
+        </div>
+        <div class="channel-settings-status" id="channel_url_status"></div>
+      </section>
+      <h1 class="page-title">커스텀 채팅</h1>
+      <p class="lead">
+        <a href="https://chzzk.naver.com/" id="chzzkChatPopupLink" target="_blank" rel="noopener">치지직 방송 채팅</a>과
+        <strong>같은 실시간 채팅</strong>을 받아, 원하는 스타일로 꾸민 뒤 OBS에 띄웁니다.
+      </p>
+
+      <div class="chat-page-layout">
+        <div class="chat-page-main">
+      <div class="grid">
+        <section class="panel">
+          <h2>스타일 미리보기 <span style="font-size:0.78rem;color:#737373">— OBS와 동일</span></h2>
+          <div class="preview-wrap" id="preview_wrap">
+            <div class="preview-static">
+              <div class="chat-board-title" id="preview_board_title"></div>
+              <div class="chat-messages-stack">
+                <div class="chat-item-shell">
+                  <div class="chat-item preview-chat-item"><span class="chat-content preview-chat-content"><span class="chat-nickname preview-nick">TEST</span><span class="preview-sep">: </span><span class="chat-message-text preview-msg">채팅창 설정 도우미 입니다.</span></span></div>
+                </div>
+                <div class="chat-item-shell">
+                  <div class="chat-item preview-chat-item"><span class="chat-content preview-chat-content"><span class="chat-nickname preview-nick">래비</span><span class="preview-sep">: </span><span class="chat-message-text preview-msg">스타일 설정옵션으로 나만의 채팅창을 꾸며보세요.</span></span></div>
+                </div>
+                <div class="chat-item-shell">
+                  <div class="chat-item preview-chat-item"><span class="chat-content preview-chat-content"><span class="chat-nickname preview-nick">URL테스트</span><span class="preview-sep">: </span><span class="chat-message-text preview-msg">문구 변경 아주 긴 텍스트용 문구입니다. ㄱ ㄴ ㄷ ㄹ ㅁ ㅂ ㅅ ㅇ ㅈ ㅊ ㅋ ㅌ ㅍ ㅎ가 나 다 라 마 바 사 아 자 차 카 타 파 하 A a B b C c D d E e F f G g H h I i J j K k L l M m N n O o P p Q q R r S s T t U u V v W w X x Y y Z z 1 2 3 4 5 6 7 8 9 0 ! @ # $ % ^ &amp; * ( ) _ + - = [ ] { } ; : ' " , . &lt; &gt; / ? ~ ` |</span></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>스타일 설정</h2>
+
+          <h3 class="settings-group">테마</h3>
+
+          <div class="field theme-primary-field">
+            <label for="bubble_theme">테마 설정</label>
+            <select id="bubble_theme">
+              <option value="pastel">파스텔</option>
+              <option value="neon">네온</option>
+              <option value="oriental">동양풍</option>
+              <option value="xp">XP 윈도우</option>
+              <option value="magical">마법소녀</option>
+              <option value="hacking">해킹</option>
+              <option value="animal">동물</option>
+              <option value="simple">심플</option>
+              <option value="minecraft">마인크래프트</option>
+            </select>
+          </div>
+
+          <div class="field theme-primary-field">
+            <label for="font_family">폰트</label>
+            <select id="font_family">
+              <option value="omyu">omyu pretty.ttf</option>
+              <option value="singleday">SingleDay-Regular.ttf</option>
+              <option value="nukka">온글잎 누카.ttf</option>
+              <option value="monas">MonaS12 (한·영)</option>
+              <option value="dunggeunmo">DungGeunMo.ttf</option>
+              <option value="solmoe">전주완판본 각R.ttf</option>
+              <option value="mulmaru">Mulmaru.ttf</option>
+              <option value="cookierun">CookieRun Regular.ttf</option>
+              <option value="malgun">Malgun Gothic</option>
+            </select>
+          </div>
+
+          <div class="opt-collapsible" id="hacking_tilt_field" data-opt-key="theme_tilt" style="display:none">
+            <button type="button" class="opt-collapsible-head" aria-expanded="false" aria-controls="theme_tilt_panel">
+              <span class="opt-collapsible-title">기울이기</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="opt-collapsible-panel" id="theme_tilt_panel">
+              <label class="visually-hidden" for="hacking_tilt">기울이기</label>
+              <select id="hacking_tilt">
+                <option value="off">없음</option>
+                <option value="left">좌</option>
+                <option value="right">우</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field color-preset-field">
+            <label>프리셋 색상</label>
+            <div class="color-preset-row">
+              <div class="color-preset-list" id="color_preset_list" role="list" aria-label="프리셋 색상"></div>
+            </div>
+          </div>
+
+          <div class="settings-section opt-collapsible" data-opt-key="section_board">
+            <button type="button" class="settings-section-head opt-collapsible-head" aria-expanded="false" aria-controls="section_board_panel">
+              <span class="opt-collapsible-title">배경판</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="settings-section-body opt-collapsible-panel" id="section_board_panel">
+
+          <div class="field field-inline">
+            <label>말풍선 배경</label>
+            <button type="button" class="btn btn-theme-chat-bg" id="btn_theme_chat_bg">배경 OFF</button>
+          </div>
+
+          <div class="field field-inline" id="board_title_field">
+            <label for="board_title">배경판 제목</label>
+            <input type="text" id="board_title" maxlength="48" placeholder="예: LIVE CHAT" autocomplete="off">
+          </div>
+
+          <div id="board_title_style_fields">
+            <div class="field-row field-row-4">
+              <div class="field">
+                <label for="board_title_color">제목 색</label>
+                <div class="color-picker">
+                  <label class="color-picker-swatch" for="board_title_color" title="색 선택">
+                    <span class="color-picker-fill" id="board_title_color_fill"></span>
+                    <input type="color" id="board_title_color" value="#ffffff">
+                  </label>
+                </div>
+              </div>
+              <div class="field">
+                <label for="board_title_font_size">제목 크기 (px)</label>
+                <input type="number" id="board_title_font_size" min="10" max="48" step="1" value="22">
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-subgroup" id="board_outer_settings">
+            <p class="settings-subgroup-title">큰 배경</p>
+            <div class="field-row field-row-4" id="outer_fill_fields">
+              <div class="field">
+                <label for="outer_bg_color">큰 배경색</label>
+                <div class="color-picker">
+                  <label class="color-picker-swatch" for="outer_bg_color" title="색 선택">
+                    <span class="color-picker-fill" id="outer_bg_color_fill"></span>
+                    <input type="color" id="outer_bg_color" value="#7a6498">
+                  </label>                </div>
+              </div>
+              <div class="field">
+                <label for="outer_bg_alpha">투명도</label>
+                <input type="range" id="outer_bg_alpha" min="0" max="1" step="0.05" value="1">
+                <div class="range-val" id="outer_bg_alpha_val">1</div>
+              </div>
+            </div>
+            <div class="field-row field-row-4" id="outer_border_fields">
+              <div class="field">
+                <label for="outer_border_color">큰 배경 테두리 색</label>
+                <div class="color-picker">
+                  <label class="color-picker-swatch" for="outer_border_color" title="색 선택">
+                    <span class="color-picker-fill" id="outer_border_color_fill"></span>
+                    <input type="color" id="outer_border_color" value="#d8c8f0">
+                  </label>                </div>
+              </div>
+              <div class="field">
+                <label for="outer_border_alpha">테두리 투명도</label>
+                <input type="range" id="outer_border_alpha" min="0" max="1" step="0.05" value="1">
+                <div class="range-val" id="outer_border_alpha_val">1</div>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn btn-theme-chat-bg" id="btn_outer_fill_custom">기본 테마</button>
+            </div>
+          </div>
+
+          <div class="settings-subgroup" id="board_mid_settings">
+            <p class="settings-subgroup-title">중간 배경</p>
+            <p class="field-hint settings-subgroup-desc">바깥 프레임과 말풍선 사이 영역 (연보라·테마색)</p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-theme-chat-bg" id="btn_theme_mid_layer">중간 배경 ON</button>
+              <button type="button" class="btn btn-theme-chat-bg" id="btn_mid_fill_custom">색·투명도 커스텀 OFF</button>
+            </div>
+            <div class="field-row field-row-4" id="mid_fill_fields">
+              <div class="field">
+                <label for="board_bg_color">색</label>
+                <div class="color-picker">
+                  <label class="color-picker-swatch" for="board_bg_color" title="색 선택">
+                    <span class="color-picker-fill" id="board_bg_color_fill"></span>
+                    <input type="color" id="board_bg_color" value="#c4b2e4">
+                  </label>                </div>
+              </div>
+              <div class="field">
+                <label for="board_bg_alpha">투명도</label>
+                <input type="range" id="board_bg_alpha" min="0" max="1" step="0.05" value="0.82">
+                <div class="range-val" id="board_bg_alpha_val">0.82</div>
+              </div>
+            </div>
+            <div class="field-row field-row-4" id="mid_border_fields">
+              <div class="field">
+                <label for="mid_border_color">중간 배경 테두리 색</label>
+                <div class="color-picker">
+                  <label class="color-picker-swatch" for="mid_border_color" title="색 선택">
+                    <span class="color-picker-fill" id="mid_border_color_fill"></span>
+                    <input type="color" id="mid_border_color" value="#e6daf8">
+                  </label>                </div>
+              </div>
+              <div class="field">
+                <label for="mid_border_alpha">테두리 투명도</label>
+                <input type="range" id="mid_border_alpha" min="0" max="1" step="0.05" value="0.45">
+                <div class="range-val" id="mid_border_alpha_val">0.45</div>
+              </div>
+            </div>
+          </div>
+
+            </div>
+          </div>
+
+          <div class="settings-section opt-collapsible" data-opt-key="section_chat_size">
+            <button type="button" class="settings-section-head opt-collapsible-head" aria-expanded="false" aria-controls="section_chat_size_panel">
+              <span class="opt-collapsible-title">채팅창 사이즈</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="settings-section-body opt-collapsible-panel" id="section_chat_size_panel">
+
+          <div class="field-row">
+            <div class="field">
+              <label for="chat_width">채팅창 너비 (px)</label>
+              <input type="number" id="chat_width" min="200" max="1920" step="10" value="640">
+              <p class="field-hint">OBS 브라우저 소스 <strong>가로</strong> 크기와 맞추세요.</p>
+            </div>
+            <div class="field">
+              <label for="chat_height">채팅창 높이 (px)</label>
+              <input type="number" id="chat_height" min="100" max="2160" step="10" value="1000">
+              <p class="field-hint">배경판 <strong>고정 높이</strong>. 채팅은 판 안에서만 쌓입니다. OBS 세로와 맞추세요.</p>
+            </div>
+          </div>
+
+            </div>
+          </div>
+
+          <div class="settings-section opt-collapsible" data-opt-key="section_bubble">
+            <button type="button" class="settings-section-head opt-collapsible-head" aria-expanded="false" aria-controls="section_bubble_panel">
+              <span class="opt-collapsible-title">말풍선</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="settings-section-body opt-collapsible-panel" id="section_bubble_panel">
+
+          <div class="field-row field-row-4">
+            <div class="field">
+              <label for="box_bg_color">말풍선 색</label>
+              <div class="color-picker">
+                <label class="color-picker-swatch" for="box_bg_color" title="색 선택">
+                  <span class="color-picker-fill" id="box_bg_color_fill"></span>
+                  <input type="color" id="box_bg_color" value="#d4c8f0">
+                </label>              </div>
+            </div>
+            <div class="field">
+              <label for="box_bg_alpha">말풍선 투명도</label>
+              <input type="range" id="box_bg_alpha" min="0" max="1" step="0.05" value="1">
+              <div class="range-val" id="box_bg_alpha_val">1</div>
+            </div>
+            <div class="field">
+              <label for="btn_bubble_reset">색 초기화</label>
+              <button type="button" class="btn" id="btn_bubble_reset">기본값</button>
+            </div>
+            <div class="field">
+              <label>말풍선 테두리</label>
+              <button type="button" class="btn btn-box-border active" id="btn_show_box_border">테두리 ON</button>
+            </div>
+          </div>
+
+          <div class="field-row field-row-4">
+            <div class="field">
+              <label for="box_border_color">테두리 색</label>
+              <div class="color-picker">
+                <label class="color-picker-swatch" for="box_border_color" title="색 선택">
+                  <span class="color-picker-fill" id="box_border_color_fill"></span>
+                  <input type="color" id="box_border_color" value="#9b8bc4">
+                </label>              </div>
+            </div>
+            <div class="field">
+              <label for="box_border_alpha">테두리 투명도</label>
+              <input type="range" id="box_border_alpha" min="0" max="1" step="0.05" value="1">
+              <div class="range-val" id="box_border_alpha_val">1</div>
+            </div>
+          </div>
+
+          <div class="field field-inline">
+            <label for="max_width">말풍선 최대 너비 (px)</label>
+            <input type="number" id="max_width" min="200" max="1200" step="10" value="640">
+            <p class="field-hint">채팅창 너비보다 클 수 없습니다.</p>
+          </div>
+
+          <div class="field field-inline">
+            <label>채팅</label>
+            <button type="button" class="btn btn-chat-alternate" id="btn_chat_alternate">채팅 OFF</button>
+          </div>
+          <p class="field-hint" style="margin-top:-0.5rem;margin-bottom:1rem">ON 시 말풍선이 좌·우로 불규칙하게 배치됩니다.</p>
+
+            </div>
+          </div>
+
+          <div class="settings-section opt-collapsible" data-opt-key="section_icon">
+            <button type="button" class="settings-section-head opt-collapsible-head" aria-expanded="false" aria-controls="section_icon_panel">
+              <span class="opt-collapsible-title">아이콘</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="settings-section-body opt-collapsible-panel" id="section_icon_panel">
+
+          <div class="field-row">
+            <div class="field">
+              <label>아이콘 표시</label>
+              <button type="button" class="btn btn-paw active" id="btn_show_paw">아이콘 ON</button>
+            </div>
+            <div class="field">
+              <label for="chat_icon_type">아이콘 모양</label>
+              <select id="chat_icon_type">
+                <option value="paw">발바닥</option>
+                <option value="heart">하트</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="paw_color">아이콘 색</label>
+              <div class="color-picker">
+                <label class="color-picker-swatch" for="paw_color" title="색 선택">
+                  <span class="color-picker-fill" id="paw_color_fill"></span>
+                  <input type="color" id="paw_color" value="#6b5b95">
+                </label>              </div>
+            </div>
+          </div>
+
+            </div>
+          </div>
+
+          <div class="settings-section opt-collapsible" data-opt-key="section_chat_content">
+            <button type="button" class="settings-section-head opt-collapsible-head" aria-expanded="false" aria-controls="section_chat_content_panel">
+              <span class="opt-collapsible-title">채팅 내용</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="settings-section-body opt-collapsible-panel" id="section_chat_content_panel">
+
+          <div class="field-row">
+            <div class="field">
+              <label for="font_size">글자 크기 (px)</label>
+              <input type="number" id="font_size" min="16" max="48" step="1" value="30">
+            </div>
+            <div class="field">
+              <label for="text_color">글자 색</label>
+              <div class="color-picker">
+                <label class="color-picker-swatch" for="text_color" title="색 선택">
+                  <span class="color-picker-fill" id="text_color_fill"></span>
+                  <input type="color" id="text_color" value="#5a4f76">
+                </label>              </div>
+            </div>
+            <div class="field">
+              <label for="max_history">최대 표시 줄 수</label>
+              <input type="number" id="max_history" min="5" max="50" step="1" value="20">
+            </div>
+          </div>
+
+            </div>
+          </div>
+
+          <div class="settings-section opt-collapsible" data-opt-key="section_nickname">
+            <button type="button" class="settings-section-head opt-collapsible-head" aria-expanded="false" aria-controls="section_nickname_panel">
+              <span class="opt-collapsible-title">닉네임</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="settings-section-body opt-collapsible-panel" id="section_nickname_panel">
+
+          <div class="field field-inline">
+            <label for="nick_layout">닉네임 표시</label>
+            <select id="nick_layout">
+              <option value="inline">인라인 (닉네임 : 채팅)</option>
+              <option value="above">위로 (닉네임을 채팅 위에)</option>
+              <option value="hidden">숨김 (닉네임 안 보임)</option>
+            </select>
+          </div>
+
+          <div class="field-row" id="nick_color_settings">
+            <div class="field">
+              <label for="btn_nick_colors">닉별 자동색</label>
+              <button type="button" class="btn btn-nick-colors" id="btn_nick_colors">닉별 자동색 OFF</button>
+            </div>
+            <div class="field" id="nick_color_single_field">
+              <label for="nick_color">통합 닉 색</label>
+              <div class="color-picker">
+                <label class="color-picker-swatch" for="nick_color" title="색 선택">
+                  <span class="color-picker-fill" id="nick_color_fill"></span>
+                  <input type="color" id="nick_color" value="#7a6a9c">
+                </label>
+              </div>
+            </div>
+          </div>
+          <p class="field-hint" id="nick_color_hint" style="margin-top:-0.35rem">닉별 자동색 OFF일 때 모든 닉네임에 적용 · 테마별 저장</p>
+
+            </div>
+          </div>
+
+          <div class="settings-section opt-collapsible" data-opt-key="section_text_outline">
+            <button type="button" class="settings-section-head opt-collapsible-head" aria-expanded="false" aria-controls="section_text_outline_panel">
+              <span class="opt-collapsible-title">텍스트 테두리</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="settings-section-body opt-collapsible-panel" id="section_text_outline_panel">
+
+          <div class="field">
+            <label class="check"><input type="checkbox" id="text_outline_enabled" checked> 텍스트 테두리 사용</label>
+          </div>
+          <div id="text_outline_fields">
+            <div class="field-row">
+              <div class="field">
+                <label for="text_outline_style">테두리 모양</label>
+                <select id="text_outline_style">
+                  <option value="shadow">그림자 (8방향)</option>
+                  <option value="bold">두꺼운 그림자</option>
+                  <option value="stroke">선 테두리</option>
+                  <option value="glow">글로우</option>
+                  <option value="none">없음</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="text_outline_color">테두리 색</label>
+                <div class="color-picker">
+                  <label class="color-picker-swatch" for="text_outline_color" title="색 선택">
+                    <span class="color-picker-fill" id="text_outline_color_fill"></span>
+                  <input type="color" id="text_outline_color" value="#e8e0f5">
+                </label>                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="text_outline_width">테두리 두께</label>
+              <input type="range" id="text_outline_width" min="1" max="8" step="1" value="1">
+              <div class="range-val" id="text_outline_width_val">1</div>
+            </div>
+            </div>
+
+            </div>
+          </div>
+
+          <div class="settings-section opt-collapsible" data-opt-key="section_misc">
+            <button type="button" class="settings-section-head opt-collapsible-head" aria-expanded="false" aria-controls="section_misc_panel">
+              <span class="opt-collapsible-title">기타</span>
+              <span class="opt-collapsible-arrow" aria-hidden="true">▸</span>
+            </button>
+            <div class="settings-section-body opt-collapsible-panel" id="section_misc_panel">
+              <div class="field field-game-mode">
+                <button type="button" class="btn btn-game-mode" id="btn_game_mode">게임모드 OFF</button>
+                <p class="field-hint">ON 시 말풍선·장식 없이 <strong>글씨만</strong> OBS에 표시됩니다.</p>
+              </div>
+              <label class="check"><input type="checkbox" id="hide_commands" checked> ! 로 시작하는 채팅 숨기기</label>
+              <label class="check"><input type="checkbox" id="hide_urls" checked> https:// 로 시작하는 채팅 숨기기</label>
+              <label class="check"><input type="checkbox" id="hide_streamer" checked> 방장(래비) 채팅 숨기기</label>
+              <label class="check"><input type="checkbox" id="no_anim"> 등장 애니메이션 끄기</label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="obs-url-head">
+            <h2>URL</h2>
+            <a id="obs_open_link" class="obs-open-link" href="#" target="_blank" rel="noopener">OBS 링크</a>
+          </div>
+          <input type="text" readonly class="obs-url" id="obs_url" aria-label="OBS URL">
+          <button type="button" class="btn" id="btn_copy">URL 복사</button>
+          <p class="copy-status" id="copy_status" aria-live="polite"></p>
+        </section>
+      </div>
+        </div>
+
+        <aside class="panel preset-sidebar" aria-label="프리셋">
+          <h2>프리셋</h2>
+          <p class="field-hint" style="margin-top:0;margin-bottom:0.65rem">슬롯 5개 · 클릭하면 불러오기</p>
+          <div class="preset-slot-list" id="preset_slot_list" role="list"></div>
+          <button type="button" class="btn btn-preset-save" id="btn_preset_save">선택한 슬롯에 저장</button>
+          <p class="preset-status" id="preset_status" aria-live="polite"></p>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="js/channel-settings.js?v=1"></script>
+  <script src="js/channel-url-panel.js?v=1"></script>
+  <script src="assets/color-palette-presets.js?v=1"></script>
+  <script src="assets/magical-theme-vars.js?v=1"></script>
+  <script src="assets/animal-theme-vars.js?v=1"></script>
+  <script>
+    var SETTINGS_KEY = "rabbibot_custom_chat_settings_v1";
+    var SLOTS_KEY = "rabbibot_custom_chat_slots_v1";
+    var PRESETS_KEY_LEGACY = "rabbibot_custom_chat_presets_v1";
+    var MAX_SLOTS = 5;
+    var selectedSlot = 1;
+    var COLOR_INPUT_IDS = ["outer_bg_color", "outer_border_color", "board_bg_color", "mid_border_color", "board_title_color", "box_bg_color", "box_border_color", "paw_color", "text_color", "nick_color", "text_outline_color"];
+    var BUBBLE_THEMES = {
+      pastel: {
+        fontFamily: "omyu",
+        boxBgColor: "#d4c8f0",
+        boxBgAlpha: 1,
+        boxBorderColor: "#9b8bc4",
+        boxBorderAlpha: 1,
+        textColor: "#5a4f76",
+        nickColor: "#7a6a9c",
+        textOutlineColor: "#e8e0f5",
+        textOutlineWidth: 1,
+        textOutlineStyle: "shadow",
+        pawColor: "#6b5b95",
+        boxShadow: "0 4px 16px rgba(45, 28, 95, 0.38)",
+        borderRadius: 24,
+        chatBg: {
+          background: "rgba(72, 58, 98, 0.9)",
+          border: "2px solid rgba(180, 160, 220, 0.55)",
+          borderRadius: "24px",
+          padding: "16px 18px",
+          boxShadow: "0 6px 22px rgba(35, 22, 70, 0.35)"
+        }
+      },
+      neon: {
+        fontFamily: "mulmaru",
+        boxBgColor: "#2a1f5c",
+        boxBgAlpha: 0.92,
+        boxBorderColor: "#00f5ff",
+        boxBorderAlpha: 1,
+        textColor: "#ffffff",
+        nickColor: "#00ffcc",
+        textOutlineColor: "#ff00aa",
+        textOutlineWidth: 2,
+        textOutlineStyle: "glow",
+        pawColor: "#00f5ff",
+        boxShadow: "0 0 10px rgba(0, 245, 255, 0.35), 0 0 20px rgba(255, 0, 170, 0.2)",
+        borderRadius: 24,
+        chatBg: {
+          background: "rgba(18, 12, 42, 0.82)",
+          border: "1px solid rgba(0, 245, 255, 0.38)",
+          borderRadius: "28px",
+          padding: "6px 10px",
+          boxShadow: "0 0 12px rgba(0, 245, 255, 0.22), 0 0 24px rgba(255, 0, 170, 0.14)"
+        }
+      },
+      oriental: {
+        fontFamily: "solmoe",
+        boxBgColor: "#faf6ee",
+        boxBgAlpha: 1,
+        boxBorderColor: "#c62828",
+        boxBorderAlpha: 1,
+        textColor: "#3e1f14",
+        nickColor: "#8c2f1e",
+        textOutlineColor: "#c9a227",
+        textOutlineWidth: 1,
+        textOutlineStyle: "shadow",
+        pawColor: "#c62828",
+        boxShadow: "0 2px 10px rgba(100, 20, 10, 0.2)",
+        borderRadius: 0,
+        chatBg: {
+          background: "rgba(255, 252, 245, 0.94)",
+          border: "2px solid rgba(198, 40, 40, 0.32)",
+          borderRadius: "4px",
+          padding: "8px 12px",
+          boxShadow: "0 3px 12px rgba(100, 20, 10, 0.16)"
+        }
+      },
+      xp: {
+        fontFamily: "dunggeunmo",
+        boxBgColor: "#ece9d8",
+        boxBgAlpha: 1,
+        boxBorderColor: "#0054e3",
+        boxBorderAlpha: 1,
+        textColor: "#000000",
+        nickColor: "#003399",
+        textOutlineColor: "#ffffff",
+        textOutlineWidth: 1,
+        textOutlineStyle: "shadow",
+        pawColor: "#0054e3",
+        boxShadow: "inset 1px 1px 0 rgba(255,255,255,0.85), inset -1px -1px 0 rgba(128,128,128,0.45), 2px 2px 5px rgba(0,0,0,0.28)",
+        borderRadius: 8,
+        chatBg: {
+          background: "rgba(236, 233, 216, 0.94)",
+          border: "2px solid #0054e3",
+          borderRadius: "8px",
+          padding: "8px 10px",
+          boxShadow: "2px 2px 6px rgba(0,0,0,0.22)"
+        }
+      },
+      magical: {
+        fontFamily: "singleday",
+        boxBgColor: "#fff5fd",
+        boxBgAlpha: 1,
+        boxBorderColor: "#ff4da6",
+        boxBorderAlpha: 1,
+        textColor: "#5c1558",
+        nickColor: "#e91e8c",
+        textOutlineColor: "#ffc8ec",
+        textOutlineWidth: 2,
+        textOutlineStyle: "glow",
+        pawColor: "#ff4da6",
+        boxShadow: "0 0 0 1px rgba(255, 215, 0, 0.38), 0 0 18px rgba(255, 77, 166, 0.55), 0 0 34px rgba(170, 100, 255, 0.38), inset 0 0 20px rgba(255, 200, 245, 0.3)",
+        borderRadius: 28,
+        chatBg: {
+          background: "rgba(255, 182, 220, 0.88)",
+          border: "3px solid rgba(255, 220, 245, 0.95)",
+          borderRadius: "34px",
+          padding: "20px 22px",
+          boxShadow: "0 0 0 2px rgba(255, 215, 0, 0.3), 0 12px 36px rgba(120, 20, 90, 0.4), 0 0 40px rgba(255, 140, 220, 0.5)"
+        }
+      },
+      hacking: {
+        fontFamily: "monas",
+        fontSize: 24,
+        boxBgColor: "#0a2838",
+        boxBgAlpha: 0.82,
+        boxBorderColor: "#00e5cc",
+        boxBorderAlpha: 1,
+        textColor: "#e8ffff",
+        nickColor: "#00ffcc",
+        textOutlineColor: "#003838",
+        textOutlineWidth: 1,
+        textOutlineStyle: "glow",
+        pawColor: "#00e5cc",
+        boxShadow: "0 0 10px rgba(0, 229, 204, 0.55), 0 0 24px rgba(0, 229, 204, 0.22), inset 0 0 18px rgba(0, 120, 110, 0.15)",
+        borderRadius: 0,
+        chatBg: {
+          background: "rgba(4, 8, 16, 0.94)",
+          border: "1px solid rgba(0, 229, 204, 0.55)",
+          borderRadius: "0",
+          padding: "12px 16px",
+          boxShadow: "0 0 12px rgba(0, 229, 204, 0.24), inset 0 0 36px rgba(0, 80, 90, 0.1)"
+        }
+      },
+      animal: {
+        fontFamily: "nukka",
+        boxBgColor: "#ffffff",
+        boxBgAlpha: 0.96,
+        boxBorderColor: "#e6b422",
+        boxBorderAlpha: 1,
+        textColor: "#5c4818",
+        nickColor: "#8b6914",
+        textOutlineColor: "#fff8e1",
+        textOutlineWidth: 1,
+        textOutlineStyle: "shadow",
+        pawColor: "#e6b422",
+        boxShadow: "0 2px 10px rgba(180, 140, 20, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.85)",
+        borderRadius: 20,
+        chatBg: {
+          background: "rgba(255, 224, 102, 0.92)",
+          border: "2px solid rgba(230, 180, 34, 0.95)",
+          borderRadius: "28px",
+          padding: "22px 20px 26px",
+          boxShadow: "0 8px 22px rgba(140, 100, 10, 0.28)"
+        }
+      },
+      minecraft: {
+        fontFamily: "dunggeunmo",
+        boxBgColor: "#3e3e3e",
+        boxBgAlpha: 0.88,
+        boxBorderColor: "#7d7d7d",
+        boxBorderAlpha: 1,
+        textColor: "#ffffff",
+        nickColor: "#55ff55",
+        textOutlineColor: "#1a1a1a",
+        textOutlineWidth: 2,
+        textOutlineStyle: "shadow",
+        pawColor: "#55ff55",
+        boxShadow: "4px 4px 0 #1b1b1b",
+        borderRadius: 0,
+        chatBg: {
+          background: "rgba(30, 30, 30, 0.9)",
+          border: "4px solid #5a5a5a",
+          borderRadius: "0",
+          padding: "12px 14px",
+          boxShadow: "6px 6px 0 #111111"
+        }
+      },
+      simple: {
+        fontFamily: "malgun",
+        boxBgColor: "#404040",
+        boxBgAlpha: 0.35,
+        boxBorderColor: "#5a5a5a",
+        boxBorderAlpha: 0.45,
+        textColor: "#ffffff",
+        nickColor: "#dddddd",
+        textOutlineColor: "#2a2a2a",
+        textOutlineWidth: 0,
+        textOutlineStyle: "none",
+        pawColor: "#b0b0b0",
+        boxShadow: "none",
+        borderRadius: 4,
+        chatBg: {
+          background: "rgba(64, 64, 64, 0.88)",
+          border: "1px solid rgba(110, 110, 110, 0.5)",
+          borderRadius: "6px",
+          padding: "10px 12px",
+          boxShadow: "none"
+        }
+      }
+    };
+
+    var THEME_CHAT_BG_KEYS = ["pastel", "neon", "oriental", "xp", "magical", "hacking", "animal", "simple", "minecraft"];
+
+    var THEME_DISPLAY_NAMES = {
+      pastel: "파스텔",
+      neon: "네온",
+      oriental: "동양풍",
+      xp: "XP",
+      magical: "마법소녀",
+      hacking: "해킹",
+      animal: "동물",
+      simple: "심플",
+      minecraft: "마인크래프트"
+    };
+
+    var FONT_FAMILY_META = {
+      omyu: { file: "omyu pretty.ttf", family: "OmyuPretty", urls: ["fonts/omyu/OmyuPretty.ttf"] },
+      singleday: { file: "SingleDay-Regular.ttf", family: "SingleDay", urls: ["fonts/singleday/SingleDay-Regular.ttf"] },
+      nukka: { file: "온글잎 누카.ttf", family: "OnglipNukka", urls: ["fonts/nukka/OnglipNukka.ttf"] },
+      monas: {
+        file: "MonaS12 (한·영)",
+        family: "MonaS12",
+        urls: ["fonts/monas/MonaS12.woff2", "fonts/monas/MonaS12TextKR.ttf"],
+        unicodeRanges: [null, "U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF"]
+      },
+      dunggeunmo: { file: "DungGeunMo.ttf", family: "DungGeunMo", urls: ["fonts/dunggeunmo/DungGeunMo.ttf"] },
+      solmoe: {
+        file: "전주완판본 각R.ttf",
+        family: "JeonjuWanpanbonGakR",
+        urls: [
+          "fonts/jeonju/JeonjuWanpanbonGak-L.ttf",
+          "fonts/jeonju/JeonjuWanpanbonGak-R.ttf",
+          "fonts/jeonju/JeonjuWanpanbonGak-R.ttf"
+        ],
+        weights: ["300", "400", "500"]
+      },
+      mulmaru: { file: "Mulmaru.ttf", family: "Mulmaru", urls: ["fonts/Mulmaru.ttf", "fonts/Mulmaru.woff2"] },
+      cookierun: { file: "CookieRun Regular.ttf", family: "CookieRun", urls: ["fonts/cookie/CookieRun Regular.ttf"] },
+      malgun: { file: "Malgun Gothic", family: "Malgun Gothic", urls: [] }
+    };
+
+    function fontOptionLabel(fontKey) {
+      var meta = FONT_FAMILY_META[fontKey];
+      return meta ? meta.file : fontKey;
+    }
+
+    function syncFontFamilySelectLabels(theme) {
+      var el = document.getElementById("font_family");
+      if (!el) return;
+      var themeKey = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      var current = el.value;
+      Array.prototype.forEach.call(el.options, function (option) {
+        option.textContent = fontOptionLabel(option.value);
+      });
+      el.value = current;
+    }
+
+    function defaultThemeFontFamily() {
+      var out = {};
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        var tp = BUBBLE_THEMES[key];
+        out[key] = (tp && tp.fontFamily) ? tp.fontFamily : "mulmaru";
+      });
+      return out;
+    }
+
+    function normalizeThemeFontFamily(s) {
+      var out = defaultThemeFontFamily();
+      if (s && s.themeFontFamily && typeof s.themeFontFamily === "object") {
+        THEME_CHAT_BG_KEYS.forEach(function (key) {
+          if (s.themeFontFamily[key]) out[key] = normalizeFontFamily(s.themeFontFamily[key]);
+        });
+      } else if (s && s.fontFamily && !s.themeFontFamily) {
+        var legacy = normalizeFontFamily(s.fontFamily);
+        var active = normalizeBubbleTheme(s.bubbleTheme);
+        if (legacy !== "mulmaru" || !BUBBLE_THEMES[active] || !BUBBLE_THEMES[active].fontFamily) {
+          out[active] = legacy;
+        }
+      }
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        if (out[key] === "cute" || out[key] === "onglip") out[key] = defaultThemeFontFamily()[key];
+      });
+      return out;
+    }
+
+    function getThemeFontFamily(s, theme) {
+      var map = normalizeThemeFontFamily(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      return map[key] || defaultThemeFontFamily()[key] || "mulmaru";
+    }
+
+    function syncThemeFontInput(map, theme) {
+      var el = document.getElementById("font_family");
+      if (!el) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      syncFontFamilySelectLabels(key);
+      var fontKey = normalizeFontFamily(map[key] || defaultThemeFontFamily()[key] || "mulmaru");
+      if (!el.querySelector('option[value="' + fontKey + '"]')) fontKey = "mulmaru";
+      el.value = fontKey;
+    }
+
+    function readThemeFontFamilyFromForm() {
+      var map = normalizeThemeFontFamily(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = normalizeFontFamily(document.getElementById("font_family").value);
+      return map;
+    }
+
+    function defaultThemeBoardTitle() {
+      return {
+        pastel: "CHATTING",
+        neon: "LIVE CHAT",
+        oriental: "채팅",
+        xp: "채팅",
+        magical: "✧｡✦ MAGIC CHAT ✦｡✧",
+        hacking: ">> SYSTEM_LOG",
+        animal: "COMMENTS",
+        simple: "LIVE CHAT",
+        minecraft: "CHAT",
+      };
+    }
+
+    function normalizeThemeBoardTitle(s) {
+      var out = defaultThemeBoardTitle();
+      if (!s || !s.themeBoardTitle || typeof s.themeBoardTitle !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        if (s.themeBoardTitle[key] != null) out[key] = String(s.themeBoardTitle[key]);
+      });
+      return out;
+    }
+
+    function getThemeBoardTitle(s, theme) {
+      var map = normalizeThemeBoardTitle(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      return map[key] != null ? String(map[key]) : (defaultThemeBoardTitle()[key] || "");
+    }
+
+    function resolveBoardTitleForDisplay(s, theme) {
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var rawMap = s && s.themeBoardTitle && typeof s.themeBoardTitle === "object" ? s.themeBoardTitle : null;
+      var hasExplicit = !!(rawMap && Object.prototype.hasOwnProperty.call(rawMap, key));
+      var title = getThemeBoardTitle(s, key).trim();
+      if (!title && !hasExplicit) title = (defaultThemeBoardTitle()[key] || "").trim();
+      var boardTitleInput = document.getElementById("board_title");
+      if (boardTitleInput && key === normalizeBubbleTheme(s.bubbleTheme)) {
+        var fromInput = String(boardTitleInput.value || "").trim();
+        if (fromInput) title = fromInput;
+      }
+      return title;
+    }
+
+    function syncBoardTitleInput(map, theme) {
+      var el = document.getElementById("board_title");
+      if (!el) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      var title = map[key];
+      if (title == null) title = defaultThemeBoardTitle()[key] || "";
+      el.value = title;
+    }
+
+    function readThemeBoardTitleFromForm() {
+      var map = normalizeThemeBoardTitle(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = String(document.getElementById("board_title").value || "");
+      return map;
+    }
+
+    function defaultThemeBoardTitleColor() {
+      return {
+        pastel: "#f8f0ff",
+        neon: "#00ffcc",
+        oriental: "#8c2f1e",
+        xp: "#ffffff",
+        magical: "#ffffff",
+        hacking: "#00ffcc",
+        animal: "#7a5c12",
+        simple: "#ffffff",
+        minecraft: "#55ff55",
+      };
+    }
+
+    function normalizeThemeBoardTitleColor(s) {
+      var out = defaultThemeBoardTitleColor();
+      if (s && s.themeBoardTitleColor && typeof s.themeBoardTitleColor === "object") {
+        THEME_CHAT_BG_KEYS.forEach(function (key) {
+          if (s.themeBoardTitleColor[key]) out[key] = String(s.themeBoardTitleColor[key]);
+        });
+      }
+      return out;
+    }
+
+    function getThemeBoardTitleColor(s, theme) {
+      var map = normalizeThemeBoardTitleColor(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      return map[key] || defaultThemeBoardTitleColor()[key] || "#f8f0ff";
+    }
+
+    function syncBoardTitleColorInput(map, theme) {
+      var el = document.getElementById("board_title_color");
+      if (!el) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      el.value = map[key] || defaultThemeBoardTitleColor()[key] || "#f8f0ff";
+      syncColorPicker("board_title_color");
+    }
+
+    function readThemeBoardTitleColorFromForm() {
+      var map = normalizeThemeBoardTitleColor(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = document.getElementById("board_title_color").value;
+      return map;
+    }
+
+    function defaultThemeBoardTitleFontSize() {
+      return {
+        pastel: 22,
+        neon: 21,
+        oriental: 26,
+        xp: 22,
+        magical: 22,
+        hacking: 16,
+        animal: 23,
+        simple: 18,
+        minecraft: 20,
+      };
+    }
+
+    function clampBoardTitleFontSize(value, fallback) {
+      var n = Number(value);
+      if (isNaN(n) || n <= 0) n = Number(fallback) || 22;
+      return Math.max(10, Math.min(48, Math.round(n)));
+    }
+
+    function normalizeThemeBoardTitleFontSize(s) {
+      var out = defaultThemeBoardTitleFontSize();
+      if (s && s.themeBoardTitleFontSize && typeof s.themeBoardTitleFontSize === "object") {
+        THEME_CHAT_BG_KEYS.forEach(function (key) {
+          if (s.themeBoardTitleFontSize[key] != null) {
+            out[key] = clampBoardTitleFontSize(s.themeBoardTitleFontSize[key], out[key]);
+          }
+        });
+      }
+      return out;
+    }
+
+    function getThemeBoardTitleFontSize(s, theme) {
+      var map = normalizeThemeBoardTitleFontSize(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      return map[key] || defaultThemeBoardTitleFontSize()[key] || 22;
+    }
+
+    function syncBoardTitleFontSizeInput(map, theme) {
+      var el = document.getElementById("board_title_font_size");
+      if (!el) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      el.value = String(map[key] || defaultThemeBoardTitleFontSize()[key] || 22);
+    }
+
+    function readThemeBoardTitleFontSizeFromForm() {
+      var map = normalizeThemeBoardTitleFontSize(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = clampBoardTitleFontSize(document.getElementById("board_title_font_size").value, map[theme]);
+      return map;
+    }
+
+    function defaultThemeBoardFill() {
+      return {
+        pastel: { color: "#c4b2e4", alpha: 0.82 },
+        neon: { color: "#a88ae4", alpha: 0.75 },
+        oriental: { color: "#fffcf5", alpha: 0.92 },
+        xp: { color: "#ffffff", alpha: 0.42 },
+        magical: { color: "#ffeefa", alpha: 0.88 },
+        hacking: { color: "#061018", alpha: 0.88 },
+        animal: { color: "#ffffff", alpha: 0.94 },
+        simple: { color: "#525252", alpha: 0.85 },
+        minecraft: { color: "#2b2b2b", alpha: 0.88 },
+      };
+    }
+
+    function normalizeThemeBoardFill(s) {
+      var out = defaultThemeBoardFill();
+      if (!s || !s.themeBoardFill || typeof s.themeBoardFill !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        var entry = s.themeBoardFill[key];
+        if (!entry || typeof entry !== "object") return;
+        if (entry.color) out[key].color = String(entry.color);
+        if (entry.alpha != null) out[key].alpha = Number(entry.alpha);
+      });
+      return out;
+    }
+
+    function getThemeBoardFill(s, theme) {
+      var map = normalizeThemeBoardFill(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var fill = map[key] || defaultThemeBoardFill()[key] || { color: "#7a6498", alpha: 1 };
+      return {
+        color: fill.color || "#7a6498",
+        alpha: fill.alpha != null ? Number(fill.alpha) : 1
+      };
+    }
+
+    function getThemeBoardFillRgba(s, theme) {
+      var fill = getThemeBoardFill(s, theme);
+      return rgbaFrom(fill.color, fill.alpha);
+    }
+
+    function syncBoardFillInput(map, theme) {
+      var colorEl = document.getElementById("board_bg_color");
+      var alphaEl = document.getElementById("board_bg_alpha");
+      if (!colorEl || !alphaEl) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      var fill = map[key] || defaultThemeBoardFill()[key] || { color: "#7a6498", alpha: 1 };
+      colorEl.value = fill.color || "#7a6498";
+      alphaEl.value = fill.alpha != null ? fill.alpha : 1;
+      var alphaVal = document.getElementById("board_bg_alpha_val");
+      if (alphaVal) alphaVal.textContent = String(fill.alpha != null ? fill.alpha : 1);
+    }
+
+    function readThemeBoardFillFromForm() {
+      var map = normalizeThemeBoardFill(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = {
+        color: document.getElementById("board_bg_color").value,
+        alpha: Number(document.getElementById("board_bg_alpha").value)
+      };
+      return map;
+    }
+
+    function defaultThemeOuterFill() {
+      return {
+        pastel: { color: "#7a6498", alpha: 1 },
+        neon: { color: "#1a0e38", alpha: 0.96 },
+        oriental: { color: "#faf6ee", alpha: 1 },
+        xp: { color: "#ece9d8", alpha: 1 },
+        magical: { color: "#d84aa8", alpha: 1 },
+        hacking: { color: "#040810", alpha: 1 },
+        animal: { color: "#ffe066", alpha: 1 },
+        simple: { color: "#484848", alpha: 0.92 },
+        minecraft: { color: "#1e1e1e", alpha: 0.95 },
+      };
+    }
+
+    function normalizeThemeOuterFill(s) {
+      var out = defaultThemeOuterFill();
+      if (!s || !s.themeOuterFill || typeof s.themeOuterFill !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        var entry = s.themeOuterFill[key];
+        if (!entry || typeof entry !== "object") return;
+        if (entry.color) out[key].color = String(entry.color);
+        if (entry.alpha != null) out[key].alpha = Number(entry.alpha);
+      });
+      return out;
+    }
+
+    function getThemeOuterFill(s, theme) {
+      var map = normalizeThemeOuterFill(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var fill = map[key] || defaultThemeOuterFill()[key] || { color: "#7a6498", alpha: 1 };
+      return {
+        color: fill.color || "#7a6498",
+        alpha: fill.alpha != null ? Number(fill.alpha) : 1
+      };
+    }
+
+    function getThemeOuterFillRgba(s, theme) {
+      return rgbaFrom(getThemeOuterFill(s, theme).color, getThemeOuterFill(s, theme).alpha);
+    }
+
+    function defaultThemeOuterBorder() {
+      return {
+        pastel: { color: "#d8c8f0", alpha: 1 },
+        neon: { color: "#00f5ff", alpha: 1 },
+        oriental: { color: "#c62828", alpha: 1 },
+        xp: { color: "#0054e3", alpha: 1 },
+        magical: { color: "#ffe8f8", alpha: 1 },
+        hacking: { color: "#00e5cc", alpha: 1 },
+        animal: { color: "#e6b422", alpha: 1 },
+        simple: { color: "#707070", alpha: 1 },
+        minecraft: { color: "#7d7d7d", alpha: 1 },
+      };
+    }
+
+    function normalizeThemeOuterBorder(s) {
+      var out = defaultThemeOuterBorder();
+      if (!s || !s.themeOuterBorder || typeof s.themeOuterBorder !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        var entry = s.themeOuterBorder[key];
+        if (!entry || typeof entry !== "object") return;
+        if (entry.color) out[key].color = String(entry.color);
+        if (entry.alpha != null) out[key].alpha = Number(entry.alpha);
+      });
+      return out;
+    }
+
+    function getThemeOuterBorder(s, theme) {
+      var map = normalizeThemeOuterBorder(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var border = map[key] || defaultThemeOuterBorder()[key] || { color: "#d8c8f0", alpha: 1 };
+      return {
+        color: border.color || "#d8c8f0",
+        alpha: border.alpha != null ? Number(border.alpha) : 1
+      };
+    }
+
+    function getThemeOuterBorderRgba(s, theme) {
+      var border = getThemeOuterBorder(s, theme);
+      return rgbaFrom(border.color, border.alpha);
+    }
+
+    function syncOuterBorderInput(map, theme) {
+      var colorEl = document.getElementById("outer_border_color");
+      var alphaEl = document.getElementById("outer_border_alpha");
+      if (!colorEl || !alphaEl) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      var border = map[key] || defaultThemeOuterBorder()[key] || { color: "#d8c8f0", alpha: 1 };
+      colorEl.value = border.color || "#d8c8f0";
+      alphaEl.value = border.alpha != null ? border.alpha : 1;
+      var alphaVal = document.getElementById("outer_border_alpha_val");
+      if (alphaVal) alphaVal.textContent = String(border.alpha != null ? border.alpha : 1);
+    }
+
+    function readThemeOuterBorderFromForm() {
+      var map = normalizeThemeOuterBorder(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = {
+        color: document.getElementById("outer_border_color").value,
+        alpha: Number(document.getElementById("outer_border_alpha").value)
+      };
+      return map;
+    }
+
+    function defaultThemeMidBorder() {
+      return {
+        pastel: { color: "#e6daf8", alpha: 0.45 },
+        neon: { color: "#d2beff", alpha: 0.32 },
+        oriental: { color: "#c62828", alpha: 0.18 },
+        xp: { color: "#0054e3", alpha: 0.35 },
+        magical: { color: "#ffdcf5", alpha: 0.65 },
+        hacking: { color: "#00e5cc", alpha: 0.32 },
+        animal: { color: "#f5d88a", alpha: 0.55 },
+        simple: { color: "#808080", alpha: 0.32 },
+        minecraft: { color: "#55ff55", alpha: 0.35 },
+      };
+    }
+
+    function normalizeThemeMidBorder(s) {
+      var out = defaultThemeMidBorder();
+      if (!s || !s.themeMidBorder || typeof s.themeMidBorder !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        var entry = s.themeMidBorder[key];
+        if (!entry || typeof entry !== "object") return;
+        if (entry.color) out[key].color = String(entry.color);
+        if (entry.alpha != null) out[key].alpha = Number(entry.alpha);
+      });
+      return out;
+    }
+
+    function getThemeMidBorder(s, theme) {
+      var map = normalizeThemeMidBorder(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var border = map[key] || defaultThemeMidBorder()[key] || { color: "#e6daf8", alpha: 0.45 };
+      return {
+        color: border.color || "#e6daf8",
+        alpha: border.alpha != null ? Number(border.alpha) : 0.45
+      };
+    }
+
+    function getThemeMidBorderRgba(s, theme) {
+      var border = getThemeMidBorder(s, theme);
+      return rgbaFrom(border.color, border.alpha);
+    }
+
+    function syncMidBorderInput(map, theme) {
+      var colorEl = document.getElementById("mid_border_color");
+      var alphaEl = document.getElementById("mid_border_alpha");
+      if (!colorEl || !alphaEl) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      var border = map[key] || defaultThemeMidBorder()[key] || { color: "#e6daf8", alpha: 0.45 };
+      colorEl.value = border.color || "#e6daf8";
+      alphaEl.value = border.alpha != null ? border.alpha : 0.45;
+      var alphaVal = document.getElementById("mid_border_alpha_val");
+      if (alphaVal) alphaVal.textContent = String(border.alpha != null ? border.alpha : 0.45);
+    }
+
+    function readThemeMidBorderFromForm() {
+      var map = normalizeThemeMidBorder(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = {
+        color: document.getElementById("mid_border_color").value,
+        alpha: Number(document.getElementById("mid_border_alpha").value)
+      };
+      return map;
+    }
+
+    function isThemeOuterBorderDefault(s, theme) {
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var border = getThemeOuterBorder(s, key);
+      var def = defaultThemeOuterBorder()[key];
+      return border.color === def.color && Number(border.alpha) === Number(def.alpha);
+    }
+
+    function isThemeMidBorderDefault(s, theme) {
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var border = getThemeMidBorder(s, key);
+      var def = defaultThemeMidBorder()[key];
+      return border.color === def.color && Number(border.alpha) === Number(def.alpha);
+    }
+
+    function restoreThemeBoardDefaultsForTheme(theme) {
+      var key = normalizeBubbleTheme(theme);
+      var outerFill = normalizeThemeOuterFill(settings);
+      var boardFill = normalizeThemeBoardFill(settings);
+      var outerBorder = normalizeThemeOuterBorder(settings);
+      var midBorder = normalizeThemeMidBorder(settings);
+      var outerCustom = normalizeThemeOuterFillCustom(settings);
+      var midCustom = normalizeThemeMidFillCustom(settings);
+      outerFill[key] = defaultThemeOuterFill()[key];
+      boardFill[key] = defaultThemeBoardFill()[key];
+      outerBorder[key] = defaultThemeOuterBorder()[key];
+      midBorder[key] = defaultThemeMidBorder()[key];
+      outerCustom[key] = false;
+      midCustom[key] = false;
+      settings.themeOuterFill = outerFill;
+      settings.themeBoardFill = boardFill;
+      settings.themeOuterBorder = outerBorder;
+      settings.themeMidBorder = midBorder;
+      settings.themeOuterFillCustom = outerCustom;
+      settings.themeMidFillCustom = midCustom;
+      syncOuterFillInput(outerFill, key);
+      syncBoardFillInput(boardFill, key);
+      syncOuterBorderInput(outerBorder, key);
+      syncMidBorderInput(midBorder, key);
+      setOuterFillCustomButton(false);
+      setMidFillCustomButton(false);
+      syncAllColorPickers();
+    }
+
+    function migrateBoardThemeDefaults(s) {
+      var VER = 6;
+      if (!s || typeof s !== "object") return s;
+      var cur = s.boardThemeDefaultsVersion || 0;
+      if (cur >= VER) return s;
+      s = Object.assign({}, s);
+      if (cur < 4) {
+        s.themeOuterFill = normalizeThemeOuterFill(s);
+        s.themeBoardFill = normalizeThemeBoardFill(s);
+        s.themeOuterBorder = normalizeThemeOuterBorder(s);
+        s.themeMidBorder = normalizeThemeMidBorder(s);
+        s.themeOuterFillCustom = normalizeThemeOuterFillCustom(s);
+        s.themeMidFillCustom = normalizeThemeMidFillCustom(s);
+        s = syncThemeFillCustomFlags(s);
+        cur = 4;
+      }
+      if (cur < 5 && normalizeBubbleTheme(s.bubbleTheme) === "hacking") {
+        if (!s.fontSize || Number(s.fontSize) >= 28) s.fontSize = 24;
+        var titleMap = normalizeThemeBoardTitleFontSize(s);
+        if (!s.themeBoardTitleFontSize || s.themeBoardTitleFontSize.hacking == null || Number(s.themeBoardTitleFontSize.hacking) >= 18) {
+          titleMap.hacking = 16;
+          s.themeBoardTitleFontSize = titleMap;
+        }
+        cur = 5;
+      }
+      if (cur < 6) {
+        s.themeOuterFill = normalizeThemeOuterFill(s);
+        s.themeOuterBorder = normalizeThemeOuterBorder(s);
+        s.themeMidBorder = normalizeThemeMidBorder(s);
+        s.themeBoardTitleColor = normalizeThemeBoardTitleColor(s);
+        var outerAnimal = s.themeOuterFill.animal || {};
+        if (outerAnimal.color === "#f5f2e6" || outerAnimal.color === "#5ebfb4") {
+          s.themeOuterFill.animal = { color: "#ffe066", alpha: 1 };
+        }
+        var borderAnimal = s.themeOuterBorder.animal || {};
+        if (borderAnimal.color === "#4db8ae") {
+          s.themeOuterBorder.animal = { color: "#e6b422", alpha: 1 };
+        }
+        var midAnimal = s.themeMidBorder.animal || {};
+        if (midAnimal.color === "#9de5dc") {
+          s.themeMidBorder.animal = { color: "#f5d88a", alpha: 0.55 };
+        }
+        if (s.themeBoardTitleColor.animal === "#ffffff" || s.themeBoardTitleColor.animal === "#3a9a92") {
+          s.themeBoardTitleColor.animal = "#7a5c12";
+        }
+        if (s.boxBorderColor === "#5ebfb4") s.boxBorderColor = "#e6b422";
+        if (s.pawColor === "#5ebfb4") s.pawColor = "#e6b422";
+        if (s.textColor === "#2d6a62") s.textColor = "#5c4818";
+        if (s.nickColor === "#3a9a92") s.nickColor = "#8b6914";
+        if (s.textOutlineColor === "#e8f8f5") s.textOutlineColor = "#fff8e1";
+        cur = 6;
+      }
+      s.boardThemeDefaultsVersion = VER;
+      return s;
+    }
+
+    function applyPreviewBoardBorders(s) {
+      var wrap = document.getElementById("preview_wrap");
+      if (!wrap) return;
+      var theme = normalizeBubbleTheme(s.bubbleTheme);
+      var boardOn = isThemeChatBgOn(s, theme) && !s.gameMode;
+      var midOn = boardOn && isThemeMidLayerOn(s, theme);
+      if (boardOn) {
+        wrap.style.setProperty("--custom-chat-outer-border", getThemeOuterBorderRgba(s, theme));
+        if (theme === "oriental") {
+          setOrientalCornerVars(wrap, getThemeOuterBorder(s, theme).color, "frame-", false);
+        }
+      } else {
+        wrap.style.removeProperty("--custom-chat-outer-border");
+      }
+      if (midOn) {
+        wrap.style.setProperty("--custom-chat-mid-border", getThemeMidBorderRgba(s, theme));
+      } else {
+        wrap.style.removeProperty("--custom-chat-mid-border");
+      }
+    }
+
+    var ORIENTAL_CORNER_PATHS = {
+      tl: "%3Cpath stroke-width='2.2' d='M0 56V0H56'/%3E%3Cpath stroke-width='1.4' d='M0 6H56'/%3E%3Cpath stroke-width='2' d='M3 3H30V10H10V30H3Z'/%3E%3Cpath stroke-width='2' d='M3 3H19V7H7V19H3Z'/%3E%3Cpath stroke-width='2' d='M3 3H11V5H5V11H3Z'/%3E",
+      tr: "%3Cpath stroke-width='2.2' d='M56 56V0H0'/%3E%3Cpath stroke-width='1.4' d='M0 6H56'/%3E%3Cpath stroke-width='2' d='M53 3H26V10H46V30H53Z'/%3E%3Cpath stroke-width='2' d='M53 3H37V7H49V19H53Z'/%3E%3Cpath stroke-width='2' d='M53 3H45V5H51V11H53Z'/%3E",
+      bl: "%3Cpath stroke-width='2.2' d='M0 0v56h56'/%3E%3Cpath stroke-width='1.4' d='M0 50H56'/%3E%3Cpath stroke-width='2' d='M3 53H30V46H10V26H3Z'/%3E%3Cpath stroke-width='2' d='M3 53H19V49H7V37H3Z'/%3E%3Cpath stroke-width='2' d='M3 53H11V51H5V45H3Z'/%3E",
+      br: "%3Cpath stroke-width='2.2' d='M56 0v56H0'/%3E%3Cpath stroke-width='1.4' d='M0 50H56'/%3E%3Cpath stroke-width='2' d='M53 53H26V46H46V26H53Z'/%3E%3Cpath stroke-width='2' d='M53 53H37V49H49V37H53Z'/%3E%3Cpath stroke-width='2' d='M53 53H45V51H51V45H53Z'/%3E"
+    };
+
+    function normalizeOrientalHexColor(hex, fallback) {
+      var h = String(hex || fallback || "#c62828").trim();
+      if (h.charAt(0) === "#") h = h.slice(1);
+      if (!/^[0-9a-fA-F]{6}$/.test(h)) h = String(fallback || "c62828").replace("#", "");
+      return "#" + h.toLowerCase();
+    }
+
+    function orientalSvgStrokeEnc(hex) {
+      return "%23" + normalizeOrientalHexColor(hex).slice(1);
+    }
+
+    function buildOrientalCornerDataUrl(strokeEnc, cornerKey) {
+      return "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='" + strokeEnc + "' stroke-linejoin='miter'%3E" + ORIENTAL_CORNER_PATHS[cornerKey] + "%3C/g%3E%3C/svg%3E\")";
+    }
+
+    function setOrientalCornerVars(target, color, varPrefix, setAccent) {
+      if (!target) return;
+      var hex = normalizeOrientalHexColor(color);
+      var stroke = orientalSvgStrokeEnc(hex);
+      var prefix = varPrefix || "";
+      ["tl", "tr", "bl", "br"].forEach(function (key) {
+        target.style.setProperty("--oriental-" + prefix + "corner-" + key, buildOrientalCornerDataUrl(stroke, key));
+      });
+      if (setAccent) target.style.setProperty("--oriental-red", hex);
+    }
+
+    function hexToRgbObj(hex) {
+      var h = normalizeOrientalHexColor(hex).slice(1);
+      return {
+        r: parseInt(h.slice(0, 2), 16),
+        g: parseInt(h.slice(2, 4), 16),
+        b: parseInt(h.slice(4, 6), 16)
+      };
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + [r, g, b].map(function (n) {
+        var v = Math.max(0, Math.min(255, Math.round(n)));
+        return (v < 16 ? "0" : "") + v.toString(16);
+      }).join("");
+    }
+
+    function shadeHex(hex, factor) {
+      var c = hexToRgbObj(hex);
+      if (factor >= 1) {
+        var f = factor - 1;
+        return rgbToHex(
+          c.r + (255 - c.r) * f,
+          c.g + (255 - c.g) * f,
+          c.b + (255 - c.b) * f
+        );
+      }
+      return rgbToHex(c.r * factor, c.g * factor, c.b * factor);
+    }
+
+    function urlEncHex(hex) {
+      return "%23" + normalizeOrientalHexColor(hex).slice(1);
+    }
+
+    function buildXpTitleGradient(base) {
+      var b = normalizeOrientalHexColor(base);
+      return "linear-gradient(180deg, " + shadeHex(b, 1.45) + " 0%, " + shadeHex(b, 1.2) + " 14%, " + b + " 52%, " + shadeHex(b, 0.55) + " 100%)";
+    }
+
+    function buildXpClientGradient(base) {
+      var b = normalizeOrientalHexColor(base);
+      return "linear-gradient(180deg, #ffffff 0%, " + shadeHex(b, 1.06) + " 5%, " + b + " 100%)";
+    }
+
+    function xpCloseColor(pawHex, fallback) {
+      var c = hexToRgbObj(pawHex);
+      if (c.r > c.g + 24 && c.r > c.b + 16) return normalizeOrientalHexColor(pawHex);
+      return normalizeOrientalHexColor(fallback || "#c84828");
+    }
+
+    function buildXpTitleButtonsUrl(btnBase, closeBase) {
+      var btn = normalizeOrientalHexColor(btnBase);
+      var close = xpCloseColor(closeBase, "#c84828");
+      var bTop = urlEncHex(shadeHex(btn, 1.35));
+      var bMid = urlEncHex(shadeHex(btn, 1.05));
+      var bBot = urlEncHex(shadeHex(btn, 0.75));
+      var bStroke = urlEncHex(shadeHex(btn, 0.35));
+      var rTop = urlEncHex(shadeHex(close, 1.25));
+      var rMid = urlEncHex(shadeHex(close, 1.0));
+      var rBot = urlEncHex(shadeHex(close, 0.72));
+      var rStroke = urlEncHex(shadeHex(close, 0.45));
+      return "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 63 21'%3E%3Cdefs%3E%3ClinearGradient id='b' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='" + bTop + "'/%3E%3Cstop offset='45%25' stop-color='" + bMid + "'/%3E%3Cstop offset='100%25' stop-color='" + bBot + "'/%3E%3C/linearGradient%3E%3ClinearGradient id='r' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='" + rTop + "'/%3E%3Cstop offset='45%25' stop-color='" + rMid + "'/%3E%3Cstop offset='100%25' stop-color='" + rBot + "'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0.5' y='0.5' width='20' height='20' fill='url(%23b)' stroke='" + bStroke + "' stroke-width='1'/%3E%3Crect x='6' y='13.5' width='9' height='2' rx='0.5' fill='%23ffffff'/%3E%3Crect x='21.5' y='0.5' width='20' height='20' fill='url(%23b)' stroke='" + bStroke + "' stroke-width='1'/%3E%3Crect x='27' y='6.5' width='9' height='9' fill='none' stroke='%23ffffff' stroke-width='1.8'/%3E%3Crect x='42.5' y='0.5' width='20' height='20' fill='url(%23r)' stroke='" + rStroke + "' stroke-width='1'/%3E%3Cpath d='M48.5 6.5 L56.5 14.5 M56.5 6.5 L48.5 14.5' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E\")";
+    }
+
+    function applyXpThemeVars(target, s, themeKey) {
+      if (!target || normalizeBubbleTheme(themeKey) !== "xp") return;
+      var tp = themePreset(themeKey);
+      var titleBase = isThemeOuterFillCustomOn(s, themeKey)
+        ? getThemeOuterFill(s, themeKey).color
+        : (getThemeOuterBorder(s, themeKey).color || "#0054e3");
+      var boardFill = getThemeBoardFill(s, themeKey);
+      var clientBase = (boardFill && boardFill.color) || s.boxBgColor || tp.boxBgColor || "#ece9d8";
+      var frameBorder = getThemeOuterBorder(s, themeKey).color || "#0054e3";
+      var btnBase = s.boxBorderColor || tp.boxBorderColor || frameBorder;
+      var closeBase = s.pawColor || tp.pawColor || "#c84828";
+      target.style.setProperty("--xp-frame-border", frameBorder);
+      target.style.setProperty("--xp-client-bg-color", normalizeOrientalHexColor(clientBase));
+      target.style.setProperty("--xp-shell-bg-image", buildXpTitleGradient(titleBase) + ", " + buildXpClientGradient(clientBase));
+      target.style.setProperty("--xp-title-buttons", buildXpTitleButtonsUrl(btnBase, closeBase));
+    }
+
+    function syncOuterFillInput(map, theme) {
+      var colorEl = document.getElementById("outer_bg_color");
+      var alphaEl = document.getElementById("outer_bg_alpha");
+      if (!colorEl || !alphaEl) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      var fill = map[key] || defaultThemeOuterFill()[key] || { color: "#7a6498", alpha: 1 };
+      colorEl.value = fill.color || "#7a6498";
+      alphaEl.value = fill.alpha != null ? fill.alpha : 1;
+      var alphaVal = document.getElementById("outer_bg_alpha_val");
+      if (alphaVal) alphaVal.textContent = String(fill.alpha != null ? fill.alpha : 1);
+    }
+
+    function readThemeOuterFillFromForm() {
+      var map = normalizeThemeOuterFill(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = {
+        color: document.getElementById("outer_bg_color").value,
+        alpha: Number(document.getElementById("outer_bg_alpha").value)
+      };
+      return map;
+    }
+
+    function defaultThemeOuterFillCustom() {
+      return { pastel: false, neon: false, oriental: false, xp: false, magical: false, hacking: false, animal: false, simple: false, minecraft: false };
+    }
+
+    function normalizeThemeOuterFillCustom(s) {
+      var out = defaultThemeOuterFillCustom();
+      if (!s || !s.themeOuterFillCustom || typeof s.themeOuterFillCustom !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        if (s.themeOuterFillCustom[key] === true) out[key] = true;
+      });
+      return out;
+    }
+
+    function normalizeHexColor(hex) {
+      var h = String(hex || "").trim().toLowerCase();
+      if (h.charAt(0) === "#") h = h.slice(1);
+      if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
+      return "#" + h;
+    }
+
+    function normalizeFillAlpha(value, fallback) {
+      var n = Number(value);
+      if (isNaN(n)) n = fallback != null ? Number(fallback) : 1;
+      return Math.round(Math.max(0, Math.min(1, n)) * 1000) / 1000;
+    }
+
+    function isThemeOuterFillDefault(s, theme) {
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var fill = getThemeOuterFill(s, key);
+      var def = defaultThemeOuterFill()[key];
+      return normalizeHexColor(fill.color) === normalizeHexColor(def.color) &&
+        normalizeFillAlpha(fill.alpha, def.alpha) === normalizeFillAlpha(def.alpha, 1);
+    }
+
+    function isThemeBoardFillDefault(s, theme) {
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      var fill = getThemeBoardFill(s, key);
+      var def = defaultThemeBoardFill()[key];
+      return normalizeHexColor(fill.color) === normalizeHexColor(def.color) &&
+        normalizeFillAlpha(fill.alpha, def.alpha) === normalizeFillAlpha(def.alpha, 1);
+    }
+
+    function syncThemeFillCustomFlags(s) {
+      if (!s) return s;
+      var outerCustom = normalizeThemeOuterFillCustom(s);
+      var midCustom = normalizeThemeMidFillCustom(s);
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        if (!outerCustom[key] && !isThemeOuterFillDefault(s, key)) outerCustom[key] = true;
+        if (!midCustom[key] && !isThemeBoardFillDefault(s, key)) midCustom[key] = true;
+      });
+      s.themeOuterFillCustom = outerCustom;
+      s.themeMidFillCustom = midCustom;
+      return s;
+    }
+
+    function isThemeOuterFillCustomOn(s, theme) {
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      if (normalizeThemeOuterFillCustom(s)[key]) return true;
+      return !isThemeOuterFillDefault(s, theme);
+    }
+
+    function setOuterFillCustomButton(on) {
+      var btn = document.getElementById("btn_outer_fill_custom");
+      if (!btn) return;
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "내 색 적용 중 (클릭 → 기본 테마)" : "기본 테마";
+    }
+
+    function enableMidFillCustom() {
+      setMidFillCustomButton(true);
+    }
+
+    function enableOuterFillCustom() {
+      setOuterFillCustomButton(true);
+    }
+
+    function syncMidFillCustomButton(map, s) {
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      var on = map[theme] === true;
+      if (!on && s) on = isThemeMidFillCustomOn(s, theme);
+      setMidFillCustomButton(on);
+    }
+
+    function syncOuterFillCustomButton(map, s) {
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      var on = map[theme] === true;
+      if (!on && s) on = isThemeOuterFillCustomOn(s, theme);
+      setOuterFillCustomButton(on);
+    }
+
+    function readThemeOuterFillCustomFromForm() {
+      var map = normalizeThemeOuterFillCustom(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = document.getElementById("btn_outer_fill_custom").classList.contains("active");
+      return map;
+    }
+
+    function applyPreviewOuterFill(s) {
+      var theme = normalizeBubbleTheme(s.bubbleTheme);
+      var boardOn = isThemeChatBgOn(s, theme) && !s.gameMode;
+      var customOn = boardOn && isThemeOuterFillCustomOn(s, theme);
+      var wrap = document.getElementById("preview_wrap");
+      if (!wrap) return;
+      var rgba = getThemeOuterFillRgba(s, theme);
+      wrap.style.setProperty("--custom-chat-outer-bg", rgba);
+      var previewStatic = wrap.querySelector(".preview-static");
+      if (!previewStatic) return;
+      previewStatic.classList.toggle("has-custom-outer-fill", customOn);
+      if (theme === "xp") {
+        applyXpThemeVars(wrap, s, theme);
+        previewStatic.style.removeProperty("background");
+        previewStatic.style.removeProperty("background-color");
+        previewStatic.style.removeProperty("background-image");
+      } else if (theme === "animal" && boardOn) {
+        applyAnimalThemeVars(wrap, getThemeOuterFill(s, theme).color);
+        previewStatic.style.removeProperty("background");
+        previewStatic.style.removeProperty("background-color");
+        previewStatic.style.removeProperty("background-image");
+      } else if (customOn) {
+        previewStatic.style.setProperty("background", rgba, "important");
+        previewStatic.style.setProperty("background-color", rgba, "important");
+        previewStatic.style.setProperty("background-image", "none", "important");
+      } else {
+        previewStatic.style.removeProperty("background");
+        previewStatic.style.removeProperty("background-color");
+        previewStatic.style.removeProperty("background-image");
+      }
+    }
+
+    function defaultThemeMidLayer() {
+      return { pastel: true, neon: true, oriental: true, xp: true, magical: true, hacking: true, animal: true, simple: false, minecraft: true };
+    }
+
+    function normalizeThemeMidLayer(s) {
+      var out = defaultThemeMidLayer();
+      if (!s || !s.themeMidLayer || typeof s.themeMidLayer !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        if (s.themeMidLayer[key] === false) out[key] = false;
+      });
+      return out;
+    }
+
+    function isThemeMidLayerOn(s, theme) {
+      return !!normalizeThemeMidLayer(s)[normalizeBubbleTheme(theme || (s && s.bubbleTheme))];
+    }
+
+    function defaultThemeMidFillCustom() {
+      return { pastel: false, neon: false, oriental: false, xp: false, magical: false, hacking: false, animal: false, simple: false, minecraft: false };
+    }
+
+    function normalizeThemeMidFillCustom(s) {
+      var out = defaultThemeMidFillCustom();
+      if (!s || !s.themeMidFillCustom || typeof s.themeMidFillCustom !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        if (s.themeMidFillCustom[key] === true) out[key] = true;
+      });
+      return out;
+    }
+
+    function isThemeMidFillCustomOn(s, theme) {
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      if (normalizeThemeMidFillCustom(s)[key]) return true;
+      return !isThemeBoardFillDefault(s, theme);
+    }
+
+    function setThemeMidLayerButton(on) {
+      var btn = document.getElementById("btn_theme_mid_layer");
+      if (!btn) return;
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "중간 배경 ON" : "중간 배경 OFF";
+    }
+
+    function setMidFillCustomButton(on) {
+      var btn = document.getElementById("btn_mid_fill_custom");
+      if (!btn) return;
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "색·투명도 커스텀 ON" : "색·투명도 커스텀 OFF";
+    }
+
+    function syncThemeMidLayerButton(map) {
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      setThemeMidLayerButton(map[theme] !== false);
+    }
+
+    function readThemeMidLayerFromForm() {
+      var map = normalizeThemeMidLayer(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = document.getElementById("btn_theme_mid_layer").classList.contains("active");
+      return map;
+    }
+
+    function readThemeMidFillCustomFromForm() {
+      var map = normalizeThemeMidFillCustom(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = document.getElementById("btn_mid_fill_custom").classList.contains("active");
+      return map;
+    }
+
+    function syncBoardSettingsUI() {
+      var boardOn = document.getElementById("btn_theme_chat_bg").classList.contains("active");
+      var midOn = document.getElementById("btn_theme_mid_layer").classList.contains("active");
+      var midCustomOn = document.getElementById("btn_mid_fill_custom").classList.contains("active");
+      var outerCustomOn = document.getElementById("btn_outer_fill_custom").classList.contains("active");
+      var titleField = document.getElementById("board_title_field");
+      var titleStyleFields = document.getElementById("board_title_style_fields");
+      var outerSettings = document.getElementById("board_outer_settings");
+      var midSettings = document.getElementById("board_mid_settings");
+      var midCustomBtn = document.getElementById("btn_mid_fill_custom");
+      var fillFields = document.getElementById("mid_fill_fields");
+      var midBorderFields = document.getElementById("mid_border_fields");
+      var outerFillFields = document.getElementById("outer_fill_fields");
+      var outerBorderFields = document.getElementById("outer_border_fields");
+      if (titleField) titleField.style.display = boardOn ? "" : "none";
+      if (titleStyleFields) titleStyleFields.style.display = boardOn ? "" : "none";
+      if (outerSettings) outerSettings.style.display = boardOn ? "" : "none";
+      if (midSettings) midSettings.style.display = boardOn ? "" : "none";
+      if (midCustomBtn) midCustomBtn.style.display = boardOn && midOn ? "" : "none";
+      var showMidFill = boardOn && midOn;
+      if (fillFields) {
+        fillFields.style.display = showMidFill ? "" : "none";
+        fillFields.style.opacity = midCustomOn ? "1" : "0.45";
+      }
+      if (midBorderFields) midBorderFields.style.display = showMidFill ? "" : "none";
+      if (outerFillFields) {
+        outerFillFields.style.display = boardOn ? "" : "none";
+        outerFillFields.style.opacity = "1";
+      }
+      if (outerBorderFields) outerBorderFields.style.display = boardOn ? "" : "none";
+      var midFillEnabled = midCustomOn && midOn && boardOn;
+      ["board_bg_color", "board_bg_alpha"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.disabled = !midFillEnabled;
+      });
+      ["mid_border_color", "mid_border_alpha"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.disabled = !showMidFill;
+      });
+      ["outer_bg_color", "outer_bg_alpha", "outer_border_color", "outer_border_alpha"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.disabled = !boardOn;
+      });
+    }
+
+    function syncMidFillFieldsEnabled() {
+      syncBoardSettingsUI();
+    }
+
+    function applyPreviewMidLayer(s) {
+      var theme = normalizeBubbleTheme(s.bubbleTheme);
+      var boardOn = isThemeChatBgOn(s, theme) && !s.gameMode;
+      var midOn = boardOn && isThemeMidLayerOn(s, theme);
+      var customOn = midOn && isThemeMidFillCustomOn(s, theme);
+      var wrap = document.getElementById("preview_wrap");
+      if (!wrap) return;
+      var midRgba = getThemeBoardFillRgba(s, theme);
+      wrap.style.setProperty("--custom-chat-mid-bg", midRgba);
+      var midStack = wrap.querySelector(".chat-messages-stack, .preview-messages-stack");
+      if (!midStack) return;
+      midStack.classList.toggle("mid-layer-off", boardOn && !midOn);
+      midStack.classList.toggle("has-custom-mid-fill", customOn);
+      if (customOn) {
+        midStack.style.setProperty("background", midRgba, "important");
+        midStack.style.setProperty("background-color", midRgba, "important");
+        midStack.style.setProperty("background-image", "none", "important");
+      } else {
+        midStack.style.removeProperty("background");
+        midStack.style.removeProperty("background-color");
+        midStack.style.removeProperty("background-image");
+      }
+    }
+
+    function applyPreviewBoardTitle(s) {
+      var el = document.getElementById("preview_board_title");
+      if (!el) return;
+      var theme = normalizeBubbleTheme(s.bubbleTheme);
+      var on = isThemeChatBgOn(s, theme) && !s.gameMode;
+      var title = resolveBoardTitleForDisplay(s, theme);
+      el.textContent = title;
+      el.classList.toggle("chat-board-title--show", on && !!title);
+      el.style.display = "";
+    }
+
+    function defaultThemeChatBg() {
+      return { pastel: false, neon: false, oriental: false, xp: false, magical: false, hacking: true, animal: true, simple: true, minecraft: true };
+    }
+
+    function normalizeThemeChatBg(s) {
+      var out = defaultThemeChatBg();
+      if (!s || !s.themeChatBg || typeof s.themeChatBg !== "object") return out;
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        if (s.themeChatBg[key] === true) out[key] = true;
+      });
+      return out;
+    }
+
+    function isThemeChatBgOn(s, theme) {
+      var map = normalizeThemeChatBg(s);
+      return !!map[normalizeBubbleTheme(theme || (s && s.bubbleTheme))];
+    }
+
+    function setThemeChatBgButton(on) {
+      var btn = document.getElementById("btn_theme_chat_bg");
+      if (!btn) return;
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "배경 ON" : "배경 OFF";
+    }
+
+    function syncThemeChatBgButton(map) {
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      setThemeChatBgButton(map[theme] === true);
+    }
+
+    function readThemeChatBgFromForm() {
+      var map = normalizeThemeChatBg(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = document.getElementById("btn_theme_chat_bg").classList.contains("active");
+      return map;
+    }
+
+    function normalizeBubbleTheme(theme) {
+      if (theme === "wolf") return "pastel";
+      if (theme === "neon" || theme === "oriental" || theme === "xp" || theme === "magical" || theme === "hacking" || theme === "animal" || theme === "simple" || theme === "minecraft") return theme;
+      return "pastel";
+    }
+
+    function themePreset(theme) {
+      return BUBBLE_THEMES[normalizeBubbleTheme(theme)];
+    }
+
+    function applyThemePresetToForm(theme) {
+      var key = normalizeBubbleTheme(theme);
+      var t = themePreset(key);
+      document.getElementById("bubble_theme").value = key;
+      document.getElementById("box_bg_color").value = t.boxBgColor;
+      document.getElementById("box_bg_alpha").value = String(t.boxBgAlpha);
+      document.getElementById("box_bg_alpha_val").textContent = String(t.boxBgAlpha);
+      document.getElementById("box_border_color").value = t.boxBorderColor;
+      document.getElementById("box_border_alpha").value = String(t.boxBorderAlpha);
+      document.getElementById("box_border_alpha_val").textContent = String(t.boxBorderAlpha);
+      document.getElementById("text_color").value = t.textColor;
+      document.getElementById("text_outline_color").value = t.textOutlineColor;
+      document.getElementById("text_outline_width").value = String(t.textOutlineWidth);
+      document.getElementById("text_outline_width_val").textContent = String(t.textOutlineWidth);
+      document.getElementById("text_outline_style").value = t.textOutlineStyle;
+      document.getElementById("paw_color").value = t.pawColor;
+      var fontMap = normalizeThemeFontFamily(settings);
+      fontMap[key] = normalizeFontFamily(t.fontFamily);
+      settings.themeFontFamily = fontMap;
+      syncThemeFontInput(fontMap, key);
+      preloadPreviewFontFiles(fontMap[key]);
+      if (t.fontSize != null) {
+        document.getElementById("font_size").value = String(t.fontSize);
+      }
+      syncOuterBorderInput(defaultThemeOuterBorder(), key);
+      syncMidBorderInput(defaultThemeMidBorder(), key);
+      syncAllColorPickers();
+    }
+
+    function syncColorPicker(id) {
+      var input = document.getElementById(id);
+      if (!input) return;
+      var hex = String(input.value || "#000000").toLowerCase();
+      var fill = document.getElementById(id + "_fill");
+      if (fill) {
+        fill.style.backgroundColor = hex;
+        fill.style.background = hex;
+      }
+    }
+
+    function syncAllColorPickers() {
+      COLOR_INPUT_IDS.forEach(syncColorPicker);
+    }
+
+    function normalizeNickLayout(s) {
+      if (s && (s.nickLayout === "inline" || s.nickLayout === "above" || s.nickLayout === "hidden")) {
+        return s.nickLayout;
+      }
+      if (s && s.showNickname === false) return "hidden";
+      return "inline";
+    }
+
+    function normalizeChatIconType(value) {
+      return value === "heart" ? "heart" : "paw";
+    }
+
+    function normalizeHackingTilt(value) {
+      if (value === "left") return "left";
+      if (value === "right") return "right";
+      return "off";
+    }
+
+    function applyHackingTiltClasses(el, tilt, active) {
+      if (!el) return;
+      el.classList.remove("hacking-tilt-left", "hacking-tilt-right", "hacking-tilt-off");
+      if (!active) return;
+      var t = normalizeHackingTilt(tilt);
+      if (t === "left") el.classList.add("hacking-tilt-left");
+      else if (t === "right") el.classList.add("hacking-tilt-right");
+      else el.classList.add("hacking-tilt-off");
+    }
+
+    function syncHackingTiltUI() {
+      var field = document.getElementById("hacking_tilt_field");
+      if (!field) return;
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      field.style.display = theme === "hacking" ? "" : "none";
+    }
+
+    function nickLayoutFromSelect() {
+      return normalizeNickLayout({ nickLayout: document.getElementById("nick_layout").value });
+    }
+
+    function setRangeInput(id, value) {
+      var el = document.getElementById(id);
+      if (el) el.value = String(value);
+      var label = document.getElementById(id + "_val");
+      if (label) label.textContent = String(value);
+    }
+
+    function setColorPresetActive(key) {
+      document.querySelectorAll(".color-preset-btn[data-preset]").forEach(function (btn) {
+        btn.classList.toggle("active", btn.getAttribute("data-preset") === key);
+      });
+    }
+
+    function applyColorPalettePreset(key) {
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      var presets = getColorPalettePresets(theme);
+      var preset = presets[key];
+      if (!preset) return;
+
+      document.getElementById("box_bg_color").value = preset.boxBg;
+      setRangeInput("box_bg_alpha", preset.boxBgAlpha != null ? preset.boxBgAlpha : 1);
+      document.getElementById("box_border_color").value = preset.boxBorder;
+      setRangeInput("box_border_alpha", preset.boxBorderAlpha != null ? preset.boxBorderAlpha : 1);
+      document.getElementById("paw_color").value = preset.paw;
+      document.getElementById("text_color").value = preset.text;
+      document.getElementById("nick_color").value = preset.nick;
+      document.getElementById("text_outline_color").value = preset.outline;
+      document.getElementById("board_title_color").value = preset.title;
+      document.getElementById("outer_bg_color").value = preset.outer.color;
+      setRangeInput("outer_bg_alpha", preset.outer.alpha != null ? preset.outer.alpha : 1);
+      document.getElementById("outer_border_color").value = preset.outerBorder.color;
+      setRangeInput("outer_border_alpha", preset.outerBorder.alpha != null ? preset.outerBorder.alpha : 1);
+      document.getElementById("board_bg_color").value = preset.board.color;
+      setRangeInput("board_bg_alpha", preset.board.alpha != null ? preset.board.alpha : 1);
+      document.getElementById("mid_border_color").value = preset.midBorder.color;
+      setRangeInput("mid_border_alpha", preset.midBorder.alpha != null ? preset.midBorder.alpha : 0.45);
+
+      setThemeMidLayerButton(true);
+      setOuterFillCustomButton(true);
+      setMidFillCustomButton(true);
+      setColorPresetActive(key);
+      onSettingsChange();
+    }
+
+    function restoreCurrentThemeColorDefaults() {
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      applyThemePresetToForm(theme);
+      restoreThemeBoardDefaultsForTheme(theme);
+      var nickMap = normalizeThemeNickColor(settings);
+      nickMap[theme] = defaultThemeNickColor()[theme];
+      settings.themeNickColor = nickMap;
+      syncThemeNickColorInput(nickMap, theme);
+      var titleColorMap = normalizeThemeBoardTitleColor(settings);
+      titleColorMap[theme] = defaultThemeBoardTitleColor()[theme];
+      settings.themeBoardTitleColor = titleColorMap;
+      syncBoardTitleColorInput(titleColorMap, theme);
+      var titleSizeMap = normalizeThemeBoardTitleFontSize(settings);
+      titleSizeMap[theme] = defaultThemeBoardTitleFontSize()[theme];
+      settings.themeBoardTitleFontSize = titleSizeMap;
+      syncBoardTitleFontSizeInput(titleSizeMap, theme);
+      setColorPresetActive("");
+      syncBoardSettingsUI();
+      syncMidFillFieldsEnabled();
+      onSettingsChange();
+    }
+
+    function refreshColorPresetUI() {
+      var root = document.getElementById("color_preset_list");
+      if (!root) return;
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      var presets = getColorPalettePresets(theme);
+      root.innerHTML = "";
+      COLOR_PALETTE_PRESET_ORDER.forEach(function (key) {
+        var preset = presets[key];
+        if (!preset) return;
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "color-preset-btn";
+        btn.setAttribute("data-preset", key);
+        btn.setAttribute("role", "listitem");
+        btn.title = preset.label;
+        btn.setAttribute("aria-label", preset.label + " 프리셋");
+        btn.style.background = preset.swatch;
+        if (key === "white") btn.style.borderColor = "rgba(0,0,0,0.18)";
+        btn.addEventListener("click", function () {
+          applyColorPalettePreset(key);
+        });
+        root.appendChild(btn);
+      });
+      var resetBtn = document.createElement("button");
+      resetBtn.type = "button";
+      resetBtn.className = "color-preset-btn color-preset-reset";
+      resetBtn.id = "btn_color_preset_reset";
+      resetBtn.setAttribute("role", "listitem");
+      resetBtn.title = "현재 테마의 기본 색으로 되돌립니다";
+      resetBtn.setAttribute("aria-label", "기본 테마 색상");
+      resetBtn.textContent = "기본";
+      resetBtn.addEventListener("click", restoreCurrentThemeColorDefaults);
+      root.appendChild(resetBtn);
+      setColorPresetActive("");
+    }
+
+    function initColorPresetUI() {
+      refreshColorPresetUI();
+    }
+
+    var OPT_COLLAPSE_KEY = "custom_chat_sections_open_v1";
+
+    function setOptCollapsibleOpen(el, open) {
+      el.classList.toggle("is-open", open);
+      var head = el.querySelector(".opt-collapsible-head");
+      if (head) head.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    function saveOptCollapsibleState() {
+      var state = {};
+      document.querySelectorAll(".opt-collapsible[data-opt-key]").forEach(function (el) {
+        state[el.getAttribute("data-opt-key")] = el.classList.contains("is-open");
+      });
+      try { localStorage.setItem(OPT_COLLAPSE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    function loadOptCollapsibleState() {
+      var state = {};
+      try { state = JSON.parse(localStorage.getItem(OPT_COLLAPSE_KEY) || "{}") || {}; } catch (e) {}
+      document.querySelectorAll(".opt-collapsible[data-opt-key]").forEach(function (el) {
+        var key = el.getAttribute("data-opt-key");
+        setOptCollapsibleOpen(el, !!state[key]);
+      });
+    }
+
+    function initOptCollapsibles() {
+      loadOptCollapsibleState();
+      document.querySelectorAll(".opt-collapsible-head").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var wrap = btn.closest(".opt-collapsible");
+          if (!wrap) return;
+          setOptCollapsibleOpen(wrap, !wrap.classList.contains("is-open"));
+          saveOptCollapsibleState();
+        });
+      });
+    }
+
+    function defaultThemeNickColor() {
+      var out = {};
+      THEME_CHAT_BG_KEYS.forEach(function (key) {
+        var tp = BUBBLE_THEMES[key];
+        out[key] = (tp && tp.nickColor) ? tp.nickColor : "#7a6a9c";
+      });
+      return out;
+    }
+
+    function normalizeThemeNickColor(s) {
+      var out = defaultThemeNickColor();
+      if (s && s.themeNickColor && typeof s.themeNickColor === "object") {
+        THEME_CHAT_BG_KEYS.forEach(function (key) {
+          if (s.themeNickColor[key]) out[key] = String(s.themeNickColor[key]);
+        });
+      } else if (s && s.nickColor) {
+        THEME_CHAT_BG_KEYS.forEach(function (key) {
+          out[key] = String(s.nickColor);
+        });
+      }
+      return out;
+    }
+
+    function getThemeNickColor(s, theme) {
+      var map = normalizeThemeNickColor(s);
+      var key = normalizeBubbleTheme(theme || (s && s.bubbleTheme));
+      return map[key] || defaultThemeNickColor()[key] || "#7a6a9c";
+    }
+
+    function syncThemeNickColorInput(map, theme) {
+      var el = document.getElementById("nick_color");
+      if (!el) return;
+      var key = normalizeBubbleTheme(theme || document.getElementById("bubble_theme").value);
+      el.value = map[key] || defaultThemeNickColor()[key] || "#7a6a9c";
+      syncColorPicker("nick_color");
+    }
+
+    function readThemeNickColorFromForm() {
+      var map = normalizeThemeNickColor(settings);
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      map[theme] = document.getElementById("nick_color").value;
+      return map;
+    }
+
+    function syncNickSettingsUI() {
+      var perNick = document.getElementById("btn_nick_colors").classList.contains("active");
+      var singleField = document.getElementById("nick_color_single_field");
+      var hint = document.getElementById("nick_color_hint");
+      var colorEl = document.getElementById("nick_color");
+      if (singleField) singleField.style.display = perNick ? "none" : "";
+      if (hint) hint.style.display = perNick ? "none" : "";
+      if (colorEl) colorEl.disabled = perNick;
+    }
+
+    function clampChatPanelWidth(value, fallback) {
+      var n = Number(value);
+      if (isNaN(n) || n <= 0) n = Number(fallback) || 640;
+      return Math.max(200, Math.min(1920, Math.round(n)));
+    }
+
+    function clampBubbleMaxWidth(value, panelWidth, fallback) {
+      var panel = clampChatPanelWidth(panelWidth, fallback);
+      var n = Number(value);
+      if (isNaN(n) || n <= 0) n = Number(fallback) || panel;
+      return Math.max(200, Math.min(panel, Math.round(n)));
+    }
+
+    function resolveChatWidths(s, defaults) {
+      var d = defaults || { chatWidth: 640, maxWidth: 640 };
+      var legacy = Number(s && s.maxWidth) || d.maxWidth;
+      var panel = clampChatPanelWidth(s && s.chatWidth != null ? s.chatWidth : legacy, d.chatWidth || legacy);
+      var bubble = clampBubbleMaxWidth(s && s.maxWidth != null ? s.maxWidth : panel, panel, d.maxWidth || panel);
+      return { panel: panel, bubble: bubble };
+    }
+
+    function applyChatWidthVars(target, widths) {
+      if (!target || !widths) return;
+      target.style.setProperty("--custom-chat-panel-width", widths.panel + "px");
+      target.style.setProperty("--custom-chat-max-width", widths.bubble + "px");
+    }
+
+    function defaultSettings() {
+      var t = BUBBLE_THEMES.pastel;
+      return {
+        fontFamily: t.fontFamily,
+        customFontFamily: "",
+        fontSize: 30,
+        pageBgColor: "#000000",
+        pageBgAlpha: 0,
+        bubbleTheme: "pastel",
+        boxBgColor: t.boxBgColor,
+        boxBgAlpha: t.boxBgAlpha,
+        boxBorderColor: t.boxBorderColor,
+        boxBorderAlpha: t.boxBorderAlpha,
+        pawColor: t.pawColor,
+        boxShadow: t.boxShadow,
+        messageBg: t.boxBgAlpha,
+        maxHistory: 20,
+        textColor: t.textColor,
+        nickColor: t.nickColor,
+        borderRadius: 24,
+        maxWidth: 640,
+        chatWidth: 640,
+        chatHeight: 1000,
+        nickColors: false,
+        nickLayout: "inline",
+        showNickname: true,
+        textOutlineEnabled: true,
+        textOutlineStyle: t.textOutlineStyle,
+        textOutlineColor: t.textOutlineColor,
+        textOutlineWidth: t.textOutlineWidth,
+        textShadow: true,
+        hideCommands: true,
+        hideUrlStart: true,
+        hideStreamer: true,
+        noAnim: false,
+        gameMode: false,
+        showPaw: true,
+        chatIconType: "paw",
+        hackingTilt: "off",
+        showBoxBorder: true,
+        chatAlternate: false,
+        themeChatBg: defaultThemeChatBg(),
+        themeBoardTitle: defaultThemeBoardTitle(),
+        themeBoardTitleColor: defaultThemeBoardTitleColor(),
+        themeBoardTitleFontSize: defaultThemeBoardTitleFontSize(),
+        themeBoardFill: defaultThemeBoardFill(),
+        themeOuterFill: defaultThemeOuterFill(),
+        themeOuterFillCustom: defaultThemeOuterFillCustom(),
+        themeOuterBorder: defaultThemeOuterBorder(),
+        themeMidLayer: defaultThemeMidLayer(),
+        themeMidFillCustom: defaultThemeMidFillCustom(),
+        themeMidBorder: defaultThemeMidBorder(),
+        themeNickColor: defaultThemeNickColor(),
+        themeFontFamily: defaultThemeFontFamily(),
+        boardThemeDefaultsVersion: 6
+      };
+    }
+
+    function normalizeFontFamily(value) {
+      if (!value || value === "kkukkukk" || value === "cute" || value === "onglip") return "mulmaru";
+      if (value === "gothic" || value === "noto" || value === "custom") return "malgun";
+      if (value === "dunggeunmo") return "dunggeunmo";
+      if (value === "solmoe") return "solmoe";
+      if (value === "omyu") return "omyu";
+      if (value === "singleday") return "singleday";
+      if (value === "nukka") return "nukka";
+      if (value === "monas") return "monas";
+      return value;
+    }
+
+    function normalizeSettingsObject(s) {
+      if (!s || typeof s !== "object") return defaultSettings();
+      var d = defaultSettings();
+      var themeKey = normalizeBubbleTheme(s.bubbleTheme);
+      var tp = themePreset(themeKey);
+      var themeFonts = normalizeThemeFontFamily(s);
+      var out = {
+        fontFamily: getThemeFontFamily(s, themeKey),
+        customFontFamily: s.customFontFamily || d.customFontFamily,
+        fontSize: Number(s.fontSize) || d.fontSize,
+        pageBgColor: s.pageBgColor || d.pageBgColor,
+        pageBgAlpha: s.pageBgAlpha != null ? Number(s.pageBgAlpha) : d.pageBgAlpha,
+        bubbleTheme: normalizeBubbleTheme(s.bubbleTheme),
+        boxBgColor: s.boxBgColor || d.boxBgColor,
+        boxBgAlpha: s.boxBgAlpha != null ? Number(s.boxBgAlpha) : (s.messageBg != null ? Number(s.messageBg) : d.boxBgAlpha),
+        boxBorderColor: s.boxBorderColor || d.boxBorderColor,
+        boxBorderAlpha: s.boxBorderAlpha != null ? Number(s.boxBorderAlpha) : d.boxBorderAlpha,
+        pawColor: s.pawColor || d.pawColor,
+        boxShadow: s.boxShadow || d.boxShadow,
+        messageBg: s.messageBg != null ? Number(s.messageBg) : d.messageBg,
+        maxHistory: Number(s.maxHistory) || d.maxHistory,
+        textColor: s.textColor || tp.textColor,
+        nickColor: getThemeNickColor(s, themeKey),
+        borderRadius: Number(s.borderRadius) || tp.borderRadius || d.borderRadius,
+        chatWidth: s.chatWidth != null ? Number(s.chatWidth) : (Number(s.maxWidth) || d.chatWidth),
+        maxWidth: Number(s.maxWidth) || d.maxWidth,
+        chatHeight: s.chatHeight != null ? Number(s.chatHeight) : d.chatHeight,
+        nickColors: s.nickColors === true,
+        nickLayout: normalizeNickLayout(s),
+        showNickname: normalizeNickLayout(s) !== "hidden",
+        textOutlineEnabled: s.textOutlineEnabled != false && s.textShadow !== false,
+        textOutlineStyle: s.textOutlineStyle || (s.textShadow === false ? "none" : tp.textOutlineStyle),
+        textOutlineColor: s.textOutlineColor || tp.textOutlineColor,
+        textOutlineWidth: Number(s.textOutlineWidth) || tp.textOutlineWidth,
+        textShadow: s.textOutlineEnabled != false && s.textShadow !== false,
+        hideCommands: s.hideCommands !== false,
+        hideUrlStart: s.hideUrlStart !== false,
+        hideStreamer: s.hideStreamer !== false,
+        gameMode: !!s.gameMode,
+        showPaw: s.showPaw !== false,
+        chatIconType: normalizeChatIconType(s.chatIconType),
+        hackingTilt: normalizeHackingTilt(s.hackingTilt),
+        showBoxBorder: s.showBoxBorder !== false,
+        chatAlternate: s.chatAlternate === true,
+        themeChatBg: normalizeThemeChatBg(s),
+        themeBoardTitle: normalizeThemeBoardTitle(s),
+        themeBoardTitleColor: normalizeThemeBoardTitleColor(s),
+        themeBoardTitleFontSize: normalizeThemeBoardTitleFontSize(s),
+        themeBoardFill: normalizeThemeBoardFill(s),
+        themeOuterFill: normalizeThemeOuterFill(s),
+        themeOuterFillCustom: normalizeThemeOuterFillCustom(s),
+        themeOuterBorder: normalizeThemeOuterBorder(s),
+        themeMidLayer: normalizeThemeMidLayer(s),
+        themeMidFillCustom: normalizeThemeMidFillCustom(s),
+        themeMidBorder: normalizeThemeMidBorder(s),
+        themeNickColor: normalizeThemeNickColor(s),
+        themeFontFamily: themeFonts,
+        boardThemeDefaultsVersion: s.boardThemeDefaultsVersion != null ? Number(s.boardThemeDefaultsVersion) : 6
+      };
+      var widths = resolveChatWidths(out, d);
+      out.chatWidth = widths.panel;
+      out.maxWidth = widths.bubble;
+      if (!(out.chatHeight > 0) && isThemeChatBgOn(out, themeKey) && !out.gameMode) {
+        out.chatHeight = 1000;
+      }
+      return syncThemeFillCustomFlags(out);
+    }
+
+    function loadSettings() {
+      try {
+        var raw = localStorage.getItem(SETTINGS_KEY);
+        if (!raw) return defaultSettings();
+        var parsed = JSON.parse(raw);
+        var migrated = migrateBoardThemeDefaults(parsed);
+        return syncThemeFillCustomFlags(normalizeSettingsObject(migrated));
+      } catch (e) { return defaultSettings(); }
+    }
+
+    function persistLoadedSettings(s) {
+      try {
+        var raw = localStorage.getItem(SETTINGS_KEY);
+        var parsed = raw ? JSON.parse(raw) : null;
+        if (!parsed ||
+          (parsed.boardThemeDefaultsVersion || 0) < 6 ||
+          JSON.stringify(s.themeOuterFill) !== JSON.stringify(parsed.themeOuterFill) ||
+          JSON.stringify(s.themeBoardFill) !== JSON.stringify(parsed.themeBoardFill) ||
+          JSON.stringify(s.themeOuterFillCustom) !== JSON.stringify(parsed.themeOuterFillCustom) ||
+          JSON.stringify(s.themeMidFillCustom) !== JSON.stringify(parsed.themeMidFillCustom)) {
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+        }
+      } catch (e) {
+        try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch (err) {}
+      }
+    }
+
+    function emptySlotsStore() {
+      return { selectedSlot: 1, slots: [null, null, null, null, null] };
+    }
+
+    function normalizeSlotsStore(parsed) {
+      var store = emptySlotsStore();
+      if (!parsed || !Array.isArray(parsed.slots)) return store;
+      for (var i = 0; i < MAX_SLOTS; i++) {
+        var slot = parsed.slots[i];
+        if (slot && slot.settings) {
+          store.slots[i] = {
+            settings: slot.settings,
+            updatedAt: slot.updatedAt || "",
+            label: presetNameTrim(slot.label || "")
+          };
+        }
+      }
+      var sel = Number(parsed.selectedSlot);
+      if (sel >= 1 && sel <= MAX_SLOTS) store.selectedSlot = sel;
+      return store;
+    }
+
+    function migrateLegacyPresetsStore() {
+      try {
+        var raw = localStorage.getItem(PRESETS_KEY_LEGACY);
+        if (!raw) return null;
+        var parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.items) || !parsed.items.length) return null;
+        var store = emptySlotsStore();
+        parsed.items.slice(0, MAX_SLOTS).forEach(function (p, i) {
+          if (!p || !p.settings) return;
+          store.slots[i] = {
+            settings: p.settings,
+            updatedAt: p.updatedAt || "",
+            label: presetNameTrim(p.name || "")
+          };
+        });
+        if (parsed.lastId) {
+          for (var j = 0; j < parsed.items.length && j < MAX_SLOTS; j++) {
+            if (parsed.items[j] && parsed.items[j].id === parsed.lastId) {
+              store.selectedSlot = j + 1;
+              break;
+            }
+          }
+        }
+        saveSlotsStore(store);
+        return store;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function loadSlotsStore() {
+      try {
+        var raw = localStorage.getItem(SLOTS_KEY);
+        if (raw) return normalizeSlotsStore(JSON.parse(raw));
+        var migrated = migrateLegacyPresetsStore();
+        if (migrated) return migrated;
+        return emptySlotsStore();
+      } catch (e) {
+        return emptySlotsStore();
+      }
+    }
+
+    function saveSlotsStore(store) {
+      try {
+        localStorage.setItem(SLOTS_KEY, JSON.stringify(store));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function presetNameTrim(value) {
+      return String(value || "").replace(/\s+/g, " ").trim();
+    }
+
+    function setPresetStatus(msg, isError) {
+      var el = document.getElementById("preset_status");
+      if (!el) return;
+      el.textContent = msg || "";
+      el.classList.toggle("is-error", !!isError);
+    }
+
+    function slotIndexFromNum(slotNum) {
+      var n = Number(slotNum);
+      if (n < 1 || n > MAX_SLOTS) return -1;
+      return n - 1;
+    }
+
+    function slotSummary(slot) {
+      if (!slot || !slot.settings) return "비어 있음";
+      if (slot.label) return slot.label;
+      var theme = normalizeBubbleTheme(slot.settings.bubbleTheme);
+      return THEME_DISPLAY_NAMES[theme] || "저장됨";
+    }
+
+    function refreshSlotList(store, selected) {
+      var listEl = document.getElementById("preset_slot_list");
+      if (!listEl) return;
+      store = store || loadSlotsStore();
+      var keep = selected != null ? Number(selected) : selectedSlot;
+      if (keep < 1 || keep > MAX_SLOTS) keep = 1;
+      listEl.innerHTML = "";
+      for (var i = 0; i < MAX_SLOTS; i++) {
+        var slotNum = i + 1;
+        var slot = store.slots[i];
+        var card = document.createElement("div");
+        card.className = "preset-slot" + (slotNum === keep ? " active" : "") + (!slot ? " is-empty" : "");
+        card.setAttribute("role", "listitem");
+        card.tabIndex = 0;
+        card.dataset.slot = String(slotNum);
+
+        var numEl = document.createElement("span");
+        numEl.className = "preset-slot-num";
+        numEl.textContent = String(slotNum);
+
+        var body = document.createElement("span");
+        body.className = "preset-slot-body";
+        var titleEl = document.createElement("span");
+        titleEl.className = "preset-slot-title";
+        titleEl.textContent = "슬롯 " + slotNum;
+        var metaEl = document.createElement("span");
+        metaEl.className = "preset-slot-meta";
+        metaEl.textContent = slotSummary(slot);
+        body.appendChild(titleEl);
+        body.appendChild(metaEl);
+
+        var clearBtn = document.createElement("button");
+        clearBtn.type = "button";
+        clearBtn.className = "preset-slot-clear";
+        clearBtn.title = "슬롯 비우기";
+        clearBtn.setAttribute("aria-label", "슬롯 " + slotNum + " 비우기");
+        clearBtn.textContent = "×";
+        clearBtn.dataset.slot = String(slotNum);
+        if (!slot) clearBtn.disabled = true;
+
+        card.appendChild(numEl);
+        card.appendChild(body);
+        card.appendChild(clearBtn);
+        listEl.appendChild(card);
+      }
+      selectedSlot = keep;
+    }
+
+    function selectSlotCard(slotNum) {
+      selectedSlot = Number(slotNum) || 1;
+      var cards = document.querySelectorAll(".preset-slot");
+      for (var i = 0; i < cards.length; i++) {
+        cards[i].classList.toggle("active", Number(cards[i].dataset.slot) === selectedSlot);
+      }
+    }
+
+    function snapshotSettingsForPreset() {
+      return normalizeSettingsObject(readForm());
+    }
+
+    function loadSlot(slotNum, options) {
+      options = options || {};
+      var idx = slotIndexFromNum(slotNum);
+      if (idx < 0) return false;
+      var store = loadSlotsStore();
+      var slot = store.slots[idx];
+      if (!slot || !slot.settings) {
+        if (!options.silent) setPresetStatus("슬롯 " + slotNum + "은(는) 비어 있어요.", true);
+        return false;
+      }
+      settings = normalizeSettingsObject(slot.settings);
+      saveSettings(settings);
+      applyToForm(settings);
+      syncBoardSettingsUI();
+      updateObsUrlDisplay();
+      store.selectedSlot = slotNum;
+      selectedSlot = slotNum;
+      if (!saveSlotsStore(store)) {
+        setPresetStatus("선택 상태 저장에 실패했어요.", true);
+      }
+      refreshSlotList(store, slotNum);
+      if (!options.silent) {
+        setPresetStatus("슬롯 " + slotNum + " 불러옴 · OBS URL 다시 복사");
+      }
+      return true;
+    }
+
+    function saveToSelectedSlot() {
+      var slotNum = selectedSlot;
+      var idx = slotIndexFromNum(slotNum);
+      if (idx < 0) {
+        setPresetStatus("저장할 슬롯을 선택해 주세요.", true);
+        return;
+      }
+      var store = loadSlotsStore();
+      var now = new Date().toISOString();
+      var snapshot = snapshotSettingsForPreset();
+      var prev = store.slots[idx];
+      store.slots[idx] = {
+        settings: snapshot,
+        updatedAt: now,
+        label: prev && prev.label ? prev.label : ""
+      };
+      store.selectedSlot = slotNum;
+      if (!saveSlotsStore(store)) {
+        setPresetStatus("저장에 실패했어요. 브라우저 저장 공간을 확인해 주세요.", true);
+        return;
+      }
+      refreshSlotList(store, slotNum);
+      setPresetStatus("슬롯 " + slotNum + "에 저장됨");
+    }
+
+    function clearSlot(slotNum) {
+      var idx = slotIndexFromNum(slotNum);
+      if (idx < 0) return;
+      var store = loadSlotsStore();
+      if (!store.slots[idx]) return;
+      BangsongDialog.confirm("슬롯 " + slotNum + "을(를) 비울까요?").then(function (ok) {
+        if (!ok) return;
+        store.slots[idx] = null;
+        if (!saveSlotsStore(store)) {
+          setPresetStatus("삭제에 실패했어요.", true);
+          return;
+        }
+        if (selectedSlot === slotNum) selectSlotCard(slotNum);
+        refreshSlotList(store, selectedSlot);
+        setPresetStatus("슬롯 " + slotNum + " 비움");
+      });
+    }
+
+    function onSlotListClick(e) {
+      var clearBtn = e.target.closest(".preset-slot-clear");
+      if (clearBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        clearSlot(clearBtn.dataset.slot);
+        return;
+      }
+      var card = e.target.closest(".preset-slot");
+      if (!card) return;
+      var slotNum = Number(card.dataset.slot);
+      selectSlotCard(slotNum);
+      var store = loadSlotsStore();
+      store.selectedSlot = slotNum;
+      saveSlotsStore(store);
+      if (store.slots[slotNum - 1]) {
+        loadSlot(slotNum);
+      } else {
+        setPresetStatus("슬롯 " + slotNum + " 선택됨");
+      }
+    }
+
+    function onSlotListKeydown(e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var card = e.target.closest(".preset-slot");
+      if (!card || e.target.closest(".preset-slot-clear")) return;
+      e.preventDefault();
+      onSlotListClick({ target: card, preventDefault: function () {} });
+    }
+
+    function initSlotsUI() {
+      var store = loadSlotsStore();
+      selectedSlot = store.selectedSlot || 1;
+      refreshSlotList(store, selectedSlot);
+    }
+
+    function readForm() {
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      var tp = themePreset(theme);
+      var themeFonts = readThemeFontFamilyFromForm();
+      var out = {
+        fontFamily: themeFonts[theme],
+        customFontFamily: document.getElementById("custom_font_family")
+          ? document.getElementById("custom_font_family").value.trim()
+          : "",
+        fontSize: Number(document.getElementById("font_size").value) || 30,
+        pageBgColor: "#000000",
+        pageBgAlpha: 0,
+        bubbleTheme: theme,
+        boxBgColor: document.getElementById("box_bg_color").value,
+        boxBgAlpha: Number(document.getElementById("box_bg_alpha").value),
+        boxBorderColor: document.getElementById("box_border_color").value,
+        boxBorderAlpha: Number(document.getElementById("box_border_alpha").value),
+        pawColor: document.getElementById("paw_color").value,
+        boxShadow: tp.boxShadow,
+        messageBg: Number(document.getElementById("box_bg_alpha").value),
+        maxHistory: Number(document.getElementById("max_history").value) || 20,
+        textColor: document.getElementById("text_color").value,
+        borderRadius: tp.borderRadius != null ? tp.borderRadius : 24,
+        maxWidth: clampBubbleMaxWidth(document.getElementById("max_width").value, document.getElementById("chat_width").value, 640),
+        chatWidth: clampChatPanelWidth(document.getElementById("chat_width").value, 640),
+        chatHeight: Number(document.getElementById("chat_height").value),
+        nickColors: document.getElementById("btn_nick_colors").classList.contains("active"),
+        nickColor: getThemeNickColor({ themeNickColor: readThemeNickColorFromForm(), bubbleTheme: theme }, theme),
+        themeNickColor: readThemeNickColorFromForm(),
+        nickLayout: nickLayoutFromSelect(),
+        showNickname: nickLayoutFromSelect() !== "hidden",
+        textOutlineEnabled: document.getElementById("text_outline_enabled").checked,
+        textOutlineStyle: document.getElementById("text_outline_style").value,
+        textOutlineColor: document.getElementById("text_outline_color").value,
+        textOutlineWidth: Number(document.getElementById("text_outline_width").value) || 2,
+        textShadow: document.getElementById("text_outline_enabled").checked,
+        hideCommands: document.getElementById("hide_commands").checked,
+        hideUrlStart: document.getElementById("hide_urls").checked,
+        hideStreamer: document.getElementById("hide_streamer").checked,
+        gameMode: document.getElementById("btn_game_mode").classList.contains("active"),
+        showPaw: document.getElementById("btn_show_paw").classList.contains("active"),
+        chatIconType: normalizeChatIconType(document.getElementById("chat_icon_type").value),
+        hackingTilt: normalizeHackingTilt(document.getElementById("hacking_tilt").value),
+        showBoxBorder: document.getElementById("btn_show_box_border").classList.contains("active"),
+        chatAlternate: document.getElementById("btn_chat_alternate").classList.contains("active"),
+        themeChatBg: readThemeChatBgFromForm(),
+        themeBoardTitle: readThemeBoardTitleFromForm(),
+        themeBoardTitleColor: readThemeBoardTitleColorFromForm(),
+        themeBoardTitleFontSize: readThemeBoardTitleFontSizeFromForm(),
+        themeBoardFill: readThemeBoardFillFromForm(),
+        themeOuterFill: readThemeOuterFillFromForm(),
+        themeOuterFillCustom: readThemeOuterFillCustomFromForm(),
+        themeOuterBorder: readThemeOuterBorderFromForm(),
+        themeMidLayer: readThemeMidLayerFromForm(),
+        themeMidFillCustom: readThemeMidFillCustomFromForm(),
+        themeMidBorder: readThemeMidBorderFromForm(),
+        themeFontFamily: themeFonts,
+        boardThemeDefaultsVersion: 6
+      };
+      return syncThemeFillCustomFlags(out);
+    }
+
+    function toggleCustomFontField() {}
+
+    function setShowPawButton(on) {
+      var btn = document.getElementById("btn_show_paw");
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "아이콘 ON" : "아이콘 OFF";
+    }
+
+    function setShowBoxBorderButton(on) {
+      var btn = document.getElementById("btn_show_box_border");
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "테두리 ON" : "테두리 OFF";
+    }
+
+    function setChatAlternateButton(on) {
+      var btn = document.getElementById("btn_chat_alternate");
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "채팅 ON (좌우)" : "채팅 OFF";
+      syncPreviewChatAlternate(!!on);
+    }
+
+    function chatAlternateSideForKey(key) {
+      var h = 0;
+      var s = String(key || "");
+      for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+      var n = Math.abs(h);
+      var mix = (n ^ (n >>> 11) ^ (n * 2654435761)) >>> 0;
+      return (mix % 100) < 50 ? "left" : "right";
+    }
+
+    function applyPreviewChatAlternateSides(wrap, on) {
+      if (!wrap) return;
+      var shells = wrap.querySelectorAll(".chat-item-shell");
+      for (var i = 0; i < shells.length; i++) {
+        var shell = shells[i];
+        if (!on) {
+          shell.classList.remove("chat-side-left", "chat-side-right");
+          continue;
+        }
+        var nickEl = shell.querySelector(".chat-nickname, .preview-nick");
+        var key = nickEl ? String(nickEl.textContent || "").trim() : ("preview-alt-" + i);
+        var side = chatAlternateSideForKey(key || ("preview-alt-" + i));
+        shell.classList.remove("chat-side-left", "chat-side-right");
+        shell.classList.add(side === "right" ? "chat-side-right" : "chat-side-left");
+      }
+    }
+
+    function syncPreviewChatAlternate(on) {
+      var wrap = document.getElementById("preview_wrap");
+      if (!wrap) return;
+      wrap.classList.toggle("preview-chat-alternate", !!on);
+      applyPreviewChatAlternateSides(wrap, !!on);
+    }
+
+    function setGameModeButton(on) {
+      var btn = document.getElementById("btn_game_mode");
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "게임모드 ON (말풍선 숨김)" : "게임모드 OFF";
+    }
+
+    function applyBubbleDefaultsToForm() {
+      applyThemePresetToForm("pastel");
+      syncThemeFontInput(normalizeThemeFontFamily(settings), "pastel");
+      setGameModeButton(false);
+    }
+
+    function setNickColorsButton(on) {
+      var btn = document.getElementById("btn_nick_colors");
+      btn.classList.toggle("active", !!on);
+      btn.textContent = on ? "닉별 자동색 ON" : "닉별 자동색 OFF";
+    }
+
+    function toggleOutlineFields() {
+      var on = document.getElementById("text_outline_enabled").checked;
+      document.getElementById("text_outline_fields").style.display = on ? "block" : "none";
+    }
+
+    function applyToForm(s) {
+      syncThemeFontInput(normalizeThemeFontFamily(s), s.bubbleTheme);
+      toggleCustomFontField();
+      document.getElementById("font_size").value = s.fontSize;
+      document.getElementById("bubble_theme").value = normalizeBubbleTheme(s.bubbleTheme);
+      document.getElementById("box_bg_color").value = s.boxBgColor || themePreset(s.bubbleTheme).boxBgColor;
+      document.getElementById("box_bg_alpha").value = s.boxBgAlpha != null ? s.boxBgAlpha : 1;
+      document.getElementById("box_bg_alpha_val").textContent = String(s.boxBgAlpha != null ? s.boxBgAlpha : 1);
+      document.getElementById("box_border_color").value = s.boxBorderColor || themePreset(s.bubbleTheme).boxBorderColor;
+      document.getElementById("box_border_alpha").value = s.boxBorderAlpha != null ? s.boxBorderAlpha : themePreset(s.bubbleTheme).boxBorderAlpha;
+      document.getElementById("box_border_alpha_val").textContent = String(s.boxBorderAlpha != null ? s.boxBorderAlpha : themePreset(s.bubbleTheme).boxBorderAlpha);
+      document.getElementById("paw_color").value = s.pawColor || themePreset(s.bubbleTheme).pawColor;
+      document.getElementById("max_history").value = s.maxHistory;
+      document.getElementById("text_color").value = s.textColor;
+      var widths = resolveChatWidths(s, defaultSettings());
+      document.getElementById("max_width").value = widths.bubble;
+      document.getElementById("chat_width").value = widths.panel;
+      document.getElementById("max_width").max = widths.panel;
+      document.getElementById("chat_height").value = (s.chatHeight != null && Number(s.chatHeight) > 0) ? s.chatHeight : 1000;
+      setNickColorsButton(!!s.nickColors);
+      syncThemeNickColorInput(normalizeThemeNickColor(s), s.bubbleTheme);
+      syncNickSettingsUI();
+      document.getElementById("nick_layout").value = normalizeNickLayout(s);
+      document.getElementById("text_outline_enabled").checked = s.textOutlineEnabled != false;
+      document.getElementById("text_outline_style").value = s.textOutlineStyle || "shadow";
+      document.getElementById("text_outline_color").value = s.textOutlineColor || "#2a1a5c";
+      document.getElementById("text_outline_width").value = s.textOutlineWidth || 2;
+      document.getElementById("text_outline_width_val").textContent = String(s.textOutlineWidth || 2);
+      toggleOutlineFields();
+      document.getElementById("hide_commands").checked = s.hideCommands !== false;
+      document.getElementById("hide_urls").checked = s.hideUrlStart !== false;
+      document.getElementById("hide_streamer").checked = s.hideStreamer !== false;
+      document.getElementById("no_anim").checked = s.noAnim;
+      setGameModeButton(!!s.gameMode);
+      setShowPawButton(s.showPaw !== false);
+      document.getElementById("chat_icon_type").value = normalizeChatIconType(s.chatIconType);
+      document.getElementById("hacking_tilt").value = normalizeHackingTilt(s.hackingTilt);
+      syncHackingTiltUI();
+      setShowBoxBorderButton(s.showBoxBorder !== false);
+      setChatAlternateButton(!!s.chatAlternate);
+      syncThemeChatBgButton(normalizeThemeChatBg(s));
+      syncBoardTitleInput(normalizeThemeBoardTitle(s), s.bubbleTheme);
+      syncBoardTitleColorInput(normalizeThemeBoardTitleColor(s), s.bubbleTheme);
+      syncBoardTitleFontSizeInput(normalizeThemeBoardTitleFontSize(s), s.bubbleTheme);
+      syncBoardFillInput(normalizeThemeBoardFill(s), s.bubbleTheme);
+      syncOuterFillInput(normalizeThemeOuterFill(s), s.bubbleTheme);
+      syncOuterBorderInput(normalizeThemeOuterBorder(s), s.bubbleTheme);
+      syncMidBorderInput(normalizeThemeMidBorder(s), s.bubbleTheme);
+      syncOuterFillCustomButton(normalizeThemeOuterFillCustom(s), s);
+      syncThemeMidLayerButton(normalizeThemeMidLayer(s));
+      syncMidFillCustomButton(normalizeThemeMidFillCustom(s), s);
+      syncMidFillFieldsEnabled();
+      syncAllColorPickers();
+      applyStaticPreview(s);
+    }
+
+    function saveSettings(s) {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    }
+
+    function overlayBaseUrl() {
+      var origin = location.origin || "";
+      var basePath = location.pathname.replace(/\/[^/]*$/, "") || "";
+      return origin + basePath + "/overlay.html";
+    }
+
+    function resolveObsChannelId(me) {
+      me = me || (window.BangsongAuth && BangsongAuth.getMe && BangsongAuth.getMe());
+      return (
+        (me && me.loggedIn && me.channelId) ||
+        (window.BangsongChannel && BangsongChannel.getChannelFromQuery && BangsongChannel.getChannelFromQuery()) ||
+        (window.BangsongChannel && BangsongChannel.resolveChannelId && BangsongChannel.resolveChannelId()) ||
+        (window.BangsongChannel && BangsongChannel.getStoredChannelId && BangsongChannel.getStoredChannelId()) ||
+        null
+      );
+    }
+
+    /** OBS 브라우저 소스는 일반 브라우저와 localStorage를 공유하지 않음 → URL 해시로 설정 전달 */
+    function encodeSettingsHash(s) {
+      var json = JSON.stringify(s);
+      var b64 = btoa(unescape(encodeURIComponent(json)));
+      return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function settingsForObsUrl() {
+      var s = syncThemeFillCustomFlags(normalizeSettingsObject(readForm()));
+      s.pageBgAlpha = 0;
+      s.pageBgColor = "#000000";
+      s.boardThemeDefaultsVersion = 6;
+      return s;
+    }
+
+    function obsUrl(me) {
+      var base = overlayBaseUrl();
+      var params = ["obs=1"];
+      var channelId = resolveObsChannelId(me);
+      if (channelId) params.push("channel=" + encodeURIComponent(String(channelId).toLowerCase()));
+      if (window.BangsongAuth && BangsongAuth.getObsKey) {
+        var obsKey = BangsongAuth.getObsKey();
+        if (obsKey) params.push("k=" + encodeURIComponent(obsKey));
+      }
+      try {
+        return base + "?" + params.join("&") + "#s=" + encodeURIComponent(encodeSettingsHash(settingsForObsUrl()));
+      } catch (e) {
+        return base + "?" + params.join("&");
+      }
+    }
+
+    function hexToRgb(hex) {
+      var h = String(hex || "#000000").replace("#", "").trim();
+      if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
+      var n = parseInt(h, 16);
+      if (isNaN(n)) return { r: 0, g: 0, b: 0 };
+      return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function rgbaFrom(hex, alpha) {
+      var a = Math.max(0, Math.min(1, Number(alpha)));
+      var c = hexToRgb(hex);
+      return "rgba(" + c.r + ", " + c.g + ", " + c.b + ", " + a + ")";
+    }
+
+    function buildPreviewOutline(s) {
+      if (s.textOutlineEnabled === false) return { shadow: "none", strokeWidth: "0", strokeColor: "transparent" };
+      var style = s.textOutlineStyle || "shadow";
+      var color = s.textOutlineColor || "#e8e0f5";
+      var w = Math.max(1, Math.min(12, Number(s.textOutlineWidth) || 2));
+      if (style === "none") return { shadow: "none", strokeWidth: "0", strokeColor: "transparent" };
+      if (style === "stroke") return { shadow: "none", strokeWidth: String(w) + "px", strokeColor: color };
+      if (style === "glow") {
+        return {
+          shadow: "0 0 " + (w * 2) + "px " + color + ", 0 0 " + (w * 4) + "px " + color,
+          strokeWidth: "0",
+          strokeColor: "transparent"
+        };
+      }
+      var ring = Math.max(1, Math.min(6, w));
+      var parts = [];
+      for (var dx = -ring; dx <= ring; dx++) {
+        for (var dy = -ring; dy <= ring; dy++) {
+          if (dx === 0 && dy === 0) continue;
+          parts.push(dx + "px " + dy + "px 0 " + color);
+        }
+      }
+      return { shadow: parts.join(", "), strokeWidth: "0", strokeColor: "transparent" };
+    }
+
+    var PREVIEW_FONT_PRIMARY = {
+      omyu: "OmyuPretty",
+      singleday: "SingleDay",
+      nukka: "OnglipNukka",
+      monas: "MonaS12",
+      dunggeunmo: "DungGeunMo",
+      solmoe: "JeonjuWanpanbonGakR",
+      cookierun: "CookieRun",
+      mulmaru: "Mulmaru",
+      malgun: "Malgun Gothic"
+    };
+
+    function resolveFontFamilyKey(s, themeKey) {
+      return getThemeFontFamily(s, themeKey);
+    }
+
+    function previewFontStack(family) {
+      return '"' + String(family || "Mulmaru").replace(/"/g, "") + '", "Malgun Gothic", sans-serif';
+    }
+
+    function resolveFontUrl(path) {
+      try {
+        var resolved = new URL(path, location.href);
+        var segs = resolved.pathname.split("/").map(function (seg) {
+          if (!seg) return seg;
+          try { return encodeURIComponent(decodeURIComponent(seg)); } catch (e) { return encodeURIComponent(seg); }
+        });
+        resolved.pathname = segs.join("/");
+        return resolved.href;
+      } catch (e) {
+        return encodeURI(String(path || ""));
+      }
+    }
+
+    function clearPreviewOverrides(wrap) {
+      if (!wrap) return;
+      var previewStatic = wrap.querySelector(".preview-static");
+      var midStack = wrap.querySelector(".chat-messages-stack, .preview-messages-stack");
+      var nodes = wrap.querySelectorAll(
+        ".preview-static, .chat-board-title, .chat-messages-stack, .preview-messages-stack, .chat-item-shell, .chat-item, .preview-chat-item, .chat-content, .preview-chat-content, .chat-nickname, .preview-nick, .chat-message-text, .preview-msg"
+      );
+      for (var i = 0; i < nodes.length; i++) {
+        nodes[i].style.removeProperty("font-family");
+      }
+      if (previewStatic) {
+        previewStatic.classList.remove("has-custom-outer-fill");
+        previewStatic.style.removeProperty("background");
+        previewStatic.style.removeProperty("background-color");
+        previewStatic.style.removeProperty("background-image");
+      }
+      if (midStack) {
+        midStack.classList.remove("has-custom-mid-fill", "mid-layer-off");
+        midStack.style.removeProperty("background");
+        midStack.style.removeProperty("background-color");
+        midStack.style.removeProperty("background-image");
+      }
+    }
+
+    function preloadPreviewFontFiles(fontKey) {
+      var meta = FONT_FAMILY_META[fontKey];
+      if (!meta || !meta.urls || !meta.urls.length) return Promise.resolve(false);
+      if (!window.FontFace || !document.fonts) return Promise.resolve(false);
+      return Promise.all(meta.urls.map(function (url, i) {
+        var opts = {};
+        if (meta.unicodeRanges && meta.unicodeRanges[i]) {
+          opts.unicodeRange = meta.unicodeRanges[i];
+        }
+        if (meta.weights && meta.weights[i]) {
+          opts.weight = meta.weights[i];
+        }
+        return new FontFace(meta.family, 'url("' + resolveFontUrl(url) + '")', opts).load()
+          .then(function (loaded) {
+            document.fonts.add(loaded);
+            return true;
+          })
+          .catch(function () { return false; });
+      })).then(function () { return true; });
+    }
+
+    function applyPreviewFontWhenReady(wrap, s) {
+      if (!wrap || !s) return Promise.resolve();
+      if (s.fontFamily === "custom" && s.customFontFamily) {
+        wrap.style.removeProperty("--custom-chat-font-primary");
+        applyPreviewFontTargets(wrap, String(s.customFontFamily).trim());
+        return Promise.resolve();
+      }
+      var theme = normalizeBubbleTheme(s.bubbleTheme);
+      var key = resolveFontFamilyKey(s, theme);
+      var family = PREVIEW_FONT_PRIMARY[key] || "Mulmaru";
+      var stack = previewFontStack(family);
+      wrap.style.setProperty("--custom-chat-font-primary", '"' + family + '"');
+      applyPreviewFontTargets(wrap, stack);
+      return preloadPreviewFontFiles(key).then(function () {
+        if (document.fonts && document.fonts.load) {
+          var quoted = '"' + family + '"';
+          return Promise.all([
+            document.fonts.load("300 16px " + quoted).catch(function () {}),
+            document.fonts.load("500 16px " + quoted).catch(function () {}),
+            document.fonts.load("16px " + quoted).catch(function () {})
+          ]);
+        }
+      }).finally(function () {
+        applyPreviewFontTargets(wrap, stack);
+      });
+    }
+
+    function applyPreviewFont(wrap, s) {
+      applyPreviewFontWhenReady(wrap, s);
+    }
+
+    function applyPreviewFontTargets(wrap, stack) {
+      if (!wrap) return;
+      wrap.style.setProperty("font-family", stack, "important");
+      var nodes = wrap.querySelectorAll(
+        ".preview-static, .chat-board-title, .chat-messages-stack, .preview-messages-stack, .chat-item-shell, .chat-item, .preview-chat-item, .chat-content, .preview-chat-content, .chat-nickname, .preview-nick, .chat-message-text, .preview-msg"
+      );
+      for (var i = 0; i < nodes.length; i++) {
+        nodes[i].style.setProperty("font-family", stack, "important");
+      }
+    }
+
+    function refreshStylePreview() {
+      settings = readForm();
+      syncOuterFillCustomButton(normalizeThemeOuterFillCustom(settings), settings);
+      syncMidFillCustomButton(normalizeThemeMidFillCustom(settings), settings);
+      applyStaticPreview(settings);
+      return settings;
+    }
+
+    function updateSettingsLabels() {
+      document.getElementById("board_bg_alpha_val").textContent = String(
+        getThemeBoardFill(settings, settings.bubbleTheme).alpha
+      );
+      document.getElementById("outer_bg_alpha_val").textContent = String(
+        getThemeOuterFill(settings, settings.bubbleTheme).alpha
+      );
+      document.getElementById("outer_border_alpha_val").textContent = String(
+        getThemeOuterBorder(settings, settings.bubbleTheme).alpha
+      );
+      document.getElementById("mid_border_alpha_val").textContent = String(
+        getThemeMidBorder(settings, settings.bubbleTheme).alpha
+      );
+      document.getElementById("box_bg_alpha_val").textContent = String(settings.boxBgAlpha);
+      document.getElementById("box_border_alpha_val").textContent = String(settings.boxBorderAlpha);
+      document.getElementById("text_outline_width_val").textContent = String(settings.textOutlineWidth);
+    }
+
+    function applyStaticPreview(s) {
+      var wrap = document.getElementById("preview_wrap");
+      if (!wrap) return;
+      clearPreviewOverrides(wrap);
+      var previewStatic = wrap.querySelector(".preview-static");
+      var theme = normalizeBubbleTheme(s.bubbleTheme);
+      var tp = themePreset(theme);
+      var boardOn = isThemeChatBgOn(s, theme) && !s.gameMode;
+      wrap.classList.toggle("preview-game-mode", !!s.gameMode);
+      wrap.classList.toggle("preview-no-paw", s.showPaw === false);
+      wrap.classList.toggle("chat-icon-heart", normalizeChatIconType(s.chatIconType) === "heart");
+      wrap.classList.toggle("preview-no-box-border", s.showBoxBorder === false);
+      syncPreviewChatAlternate(s.chatAlternate === true);
+      var nickLayout = normalizeNickLayout(s);
+      wrap.classList.toggle("preview-hide-nick", nickLayout === "hidden");
+      wrap.classList.toggle("preview-nick-above", nickLayout === "above");
+      var previewItems = wrap.querySelectorAll(".chat-item, .preview-chat-item");
+      var previewContents = wrap.querySelectorAll(".chat-content, .preview-chat-content");
+      for (var pi = 0; pi < previewItems.length; pi++) {
+        previewItems[pi].classList.toggle("chat-item--nick-above", nickLayout === "above");
+      }
+      for (var pc = 0; pc < previewContents.length; pc++) {
+        previewContents[pc].classList.toggle("chat-content--nick-above", nickLayout === "above");
+      }
+      wrap.classList.toggle("preview-chat-board-on", boardOn);
+      if (previewStatic) previewStatic.classList.toggle("chat-board-on", boardOn);
+      applyPreviewOuterFill(s);
+      applyPreviewMidLayer(s);
+      applyPreviewBoardBorders(s);
+      wrap.classList.remove("preview-page-filled");
+      wrap.classList.remove("bubble-theme-pastel", "bubble-theme-neon", "bubble-theme-oriental", "bubble-theme-xp", "bubble-theme-magical", "bubble-theme-hacking", "bubble-theme-animal", "bubble-theme-simple", "bubble-theme-minecraft");
+      wrap.classList.add("bubble-theme-" + theme);
+      applyHackingTiltClasses(wrap, s.hackingTilt, theme === "hacking");
+      wrap.style.setProperty("--preview-page-bg", "transparent");
+      wrap.style.setProperty("--custom-chat-box-bg", rgbaFrom(s.boxBgColor || tp.boxBgColor, s.boxBgAlpha != null ? s.boxBgAlpha : tp.boxBgAlpha));
+      wrap.style.setProperty("--custom-chat-box-border", rgbaFrom(s.boxBorderColor || tp.boxBorderColor, s.boxBorderAlpha != null ? s.boxBorderAlpha : tp.boxBorderAlpha));
+      if (theme === "oriental") {
+        setOrientalCornerVars(wrap, s.boxBorderColor || tp.boxBorderColor, "", true);
+      }
+      if (theme === "xp") {
+        applyXpThemeVars(wrap, s, theme);
+      }
+      wrap.style.setProperty("--custom-chat-text-color", s.textColor || tp.textColor);
+      wrap.style.setProperty("--custom-chat-nick-color", getThemeNickColor(s, theme));
+      if (theme === "magical") {
+        applyMagicalThemeVars(wrap, {
+          accent: s.boxBorderColor || tp.boxBorderColor,
+          paw: s.pawColor || tp.pawColor,
+          outline: s.textOutlineColor || tp.textOutlineColor,
+          nick: getThemeNickColor(s, theme),
+          outerBorder: getThemeOuterBorder(s, theme).color,
+          outerFill: getThemeOuterFill(s, theme).color,
+          boxBg: s.boxBgColor || tp.boxBgColor,
+          text: s.textColor || tp.textColor
+        });
+        wrap.style.removeProperty("--custom-chat-box-shadow");
+      } else {
+        clearMagicalThemeVars(wrap);
+        if (theme !== "animal") clearAnimalThemeVars(wrap);
+        wrap.style.setProperty("--custom-chat-box-shadow", s.boxShadow || tp.boxShadow);
+      }
+      wrap.style.setProperty("--custom-chat-paw-color", s.pawColor || tp.pawColor);
+      wrap.style.setProperty("--custom-chat-radius", String(s.borderRadius != null ? s.borderRadius : (tp.borderRadius != null ? tp.borderRadius : 24)) + "px");
+      applyPreviewFont(wrap, s);
+      wrap.style.setProperty("--custom-chat-font-size", String(s.fontSize || 30) + "px");
+      wrap.style.setProperty("--custom-chat-board-title-color", getThemeBoardTitleColor(s, theme));
+      wrap.style.setProperty("--custom-chat-board-title-font-size", getThemeBoardTitleFontSize(s, theme) + "px");
+      applyChatWidthVars(wrap, resolveChatWidths(s, defaultSettings()));
+      applyPreviewPanelSize(wrap, s);
+      var o = buildPreviewOutline(s);
+      wrap.style.setProperty("--custom-chat-text-shadow", o.shadow);
+      wrap.style.setProperty("--custom-chat-text-stroke-width", o.strokeWidth);
+      wrap.style.setProperty("--custom-chat-text-stroke-color", o.strokeColor);
+      var nickEls = wrap.querySelectorAll(".chat-nickname, .preview-nick");
+      var msgEls = wrap.querySelectorAll(".chat-message-text, .preview-msg");
+      var sampleNicks = ["TEST", "래비", "URL테스트"];
+      var palette = [
+        "#FFD700", "#00CED1", "#FF69B4", "#7B68EE", "#32CD32", "#FF6347", "#20B2AA", "#FF1493",
+        "#9370DB", "#00FA9A", "#FF8C00", "#1E90FF", "#DC143C", "#00BFFF", "#FFB6C1"
+      ];
+      for (var i = 0; i < nickEls.length; i++) {
+        var nick = sampleNicks[i] || "닉네임";
+        var el = nickEls[i];
+        if (s.nickColors) {
+          var h = 0;
+          for (var j = 0; j < nick.length; j++) h = ((h << 5) - h) + nick.charCodeAt(j) | 0;
+          el.style.color = palette[Math.abs(h) % palette.length];
+        } else {
+          el.style.color = getThemeNickColor(s, theme);
+        }
+      }
+      var msgColor = s.textColor || tp.textColor;
+      for (var m = 0; m < msgEls.length; m++) {
+        msgEls[m].style.color = msgColor;
+      }
+      applyPreviewBoardTitle(s);
+    }
+
+    function clampChatHeight(value) {
+      var n = Number(value);
+      if (isNaN(n) || n <= 0) return 0;
+      return Math.max(100, Math.min(2160, Math.round(n)));
+    }
+
+    function applyPreviewPanelSize(wrap, s) {
+      if (!wrap) return;
+      var boardOn = wrap.classList.contains("preview-chat-board-on") ||
+        (isThemeChatBgOn(s, s.bubbleTheme) && !s.gameMode);
+      var h = clampChatHeight(s.chatHeight);
+      if (h <= 0 && boardOn) h = 1000;
+      var isHacking = wrap.classList.contains("bubble-theme-hacking");
+      var hackingTilt = isHacking && !wrap.classList.contains("hacking-tilt-off");
+      if (h > 0) {
+        wrap.style.setProperty("--custom-chat-panel-height", h + "px");
+        wrap.style.setProperty("--chat-board-messages-min-height", "0px");
+        wrap.style.minHeight = boardOn ? (h + 32) + "px" : h + "px";
+        wrap.style.maxHeight = "";
+        wrap.style.overflow = (isHacking && !hackingTilt) ? "visible" : (boardOn ? "visible" : "hidden");
+      } else {
+        wrap.style.removeProperty("--custom-chat-panel-height");
+        wrap.style.setProperty("--chat-board-messages-min-height", "0px");
+        wrap.style.minHeight = "280px";
+        wrap.style.maxHeight = "";
+        wrap.style.overflow = "visible";
+      }
+    }
+
+    function clampChatWidthFields(fromId) {
+      var chatW = document.getElementById("chat_width");
+      var maxW = document.getElementById("max_width");
+      if (!chatW || !maxW) return;
+      var panel = clampChatPanelWidth(chatW.value, 640);
+      chatW.value = panel;
+      if (fromId === "max_width") {
+        maxW.value = clampBubbleMaxWidth(maxW.value, panel, panel);
+      } else if (Number(maxW.value) > panel) {
+        maxW.value = panel;
+      }
+      maxW.max = panel;
+    }
+
+    function syncChatWidthMaxAttr() {
+      var chatW = document.getElementById("chat_width");
+      var maxW = document.getElementById("max_width");
+      if (!chatW || !maxW) return;
+      var raw = String(chatW.value).trim();
+      if (raw === "" || isNaN(Number(raw))) {
+        maxW.removeAttribute("max");
+        return;
+      }
+      maxW.max = clampChatPanelWidth(raw, 640);
+    }
+
+    function setCopyStatus(msg, isError) {
+      var el = document.getElementById("copy_status");
+      if (!el) return;
+      el.textContent = msg || "";
+      el.classList.toggle("is-error", !!isError);
+    }
+
+    function copyTextFallback(text) {
+      var input = document.getElementById("obs_url");
+      if (input && input.value) {
+        input.focus();
+        input.select();
+        input.setSelectionRange(0, input.value.length);
+        try {
+          if (document.execCommand("copy")) return true;
+        } catch (e) {}
+      }
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    function copyObsUrl() {
+      var btn = document.getElementById("btn_copy");
+      if (btn) btn.disabled = true;
+      var authP = window.BangsongAuth && BangsongAuth.fetchMe
+        ? BangsongAuth.fetchMe(true)
+        : Promise.resolve(null);
+      return authP.then(function (me) {
+        updateObsUrlDisplay(me);
+        var url = obsUrl(me);
+        var input = document.getElementById("obs_url");
+        if (input) input.value = url;
+        if (!url) {
+          if (btn) btn.disabled = false;
+          setCopyStatus("URL을 만들 수 없습니다.", true);
+          return;
+        }
+        if (!/[?&]channel=/.test(url)) {
+          if (btn) btn.disabled = false;
+          setCopyStatus("채널 정보 없음 — 로그인 또는 방송 URL 설정 후 다시 시도", true);
+          if (window.BangsongDialog) {
+            BangsongDialog.alert("먼저 치지직 로그인을 진행하거나 홈에서 방송 URL을 저장해 주세요.\nOBS URL에 채널 정보(channel=)가 포함되어야 합니다.");
+          }
+          return;
+        }
+        function finishCopy(ok) {
+          if (btn) btn.disabled = false;
+          if (ok) setCopyStatus("OBS URL 복사됨");
+          else setCopyStatus("복사 실패 — 입력창을 선택한 뒤 Ctrl+C 하세요.", true);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(url).then(function () {
+            finishCopy(true);
+          }).catch(function () {
+            finishCopy(copyTextFallback(url));
+          });
+        }
+        finishCopy(copyTextFallback(url));
+      }).catch(function () {
+        if (btn) btn.disabled = false;
+        setCopyStatus("OBS URL을 만들 수 없습니다. 새로고침 후 다시 시도해 주세요.", true);
+      });
+    }
+
+    function updateObsUrlDisplay(me) {
+      var url = obsUrl(me);
+      var input = document.getElementById("obs_url");
+      if (input) input.value = url;
+      var obsLink = document.getElementById("obs_open_link");
+      if (obsLink) obsLink.href = url;
+      var tab = document.getElementById("preview_new_tab");
+      if (tab) {
+        var previewParams = ["ui=1"];
+        var channelId = resolveObsChannelId(me);
+        if (channelId) previewParams.push("channel=" + encodeURIComponent(String(channelId).toLowerCase()));
+        tab.href = overlayBaseUrl() + "?" + previewParams.join("&");
+      }
+    }
+
+    var settings = loadSettings();
+    persistLoadedSettings(settings);
+    if (
+      settings.fontFamily === "cute" ||
+      settings.fontFamily === "onglip" ||
+      (settings.themeFontFamily && (
+        JSON.stringify(settings.themeFontFamily).indexOf("cute") >= 0 ||
+        JSON.stringify(settings.themeFontFamily).indexOf("onglip") >= 0
+      ))
+    ) {
+      settings.themeFontFamily = normalizeThemeFontFamily(settings);
+      settings.fontFamily = getThemeFontFamily(settings, settings.bubbleTheme);
+    }
+    try {
+      var rawSaved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null");
+      if (rawSaved && !rawSaved.boxBgColor) saveSettings(settings);
+    } catch (e) {}
+    applyToForm(settings);
+    if (settings.textColor === "#f3ecff") {
+      settings.textColor = themePreset(settings.bubbleTheme).textColor;
+      settings.themeNickColor = normalizeThemeNickColor(Object.assign({}, settings, {
+        nickColor: themePreset(settings.bubbleTheme).nickColor
+      }));
+      settings.nickColor = getThemeNickColor(settings, settings.bubbleTheme);
+      settings.textOutlineColor = themePreset(settings.bubbleTheme).textOutlineColor;
+      settings.textOutlineWidth = themePreset(settings.bubbleTheme).textOutlineWidth;
+      applyToForm(settings);
+    }
+    initSlotsUI();
+    initColorPresetUI();
+    initOptCollapsibles();
+    preloadPreviewFontFiles(getThemeFontFamily(settings, settings.bubbleTheme));
+
+    document.getElementById("btn_preset_save").addEventListener("click", saveToSelectedSlot);
+    document.getElementById("preset_slot_list").addEventListener("click", onSlotListClick);
+    document.getElementById("preset_slot_list").addEventListener("keydown", onSlotListKeydown);
+
+    function onSettingsChange() {
+      toggleOutlineFields();
+      toggleCustomFontField();
+      refreshStylePreview();
+      syncAllColorPickers();
+      syncBoardSettingsUI();
+      syncMidFillFieldsEnabled();
+      syncNickSettingsUI();
+      syncHackingTiltUI();
+      updateSettingsLabels();
+      saveSettings(settings);
+      updateObsUrlDisplay();
+      try {
+        window.postMessage({ type: "rabbibot-custom-chat-settings", settings: settings }, location.origin);
+      } catch (e) {}
+    }
+
+    var PREVIEW_SKIP_IDS = {
+      obs_url: true,
+      max_history: true
+    };
+
+    var PREVIEW_RANGE_VAL_IDS = {
+      outer_bg_alpha: true,
+      outer_border_alpha: true,
+      board_bg_alpha: true,
+      mid_border_alpha: true,
+      box_bg_alpha: true,
+      box_border_alpha: true,
+      text_outline_width: true
+    };
+
+    function syncPreviewRangeLabel(id) {
+      if (!PREVIEW_RANGE_VAL_IDS[id]) return;
+      var input = document.getElementById(id);
+      var label = document.getElementById(id + "_val");
+      if (input && label) label.textContent = String(input.value);
+    }
+
+    function beforeLivePreview(id, eventType) {
+      if (id === "font_family") {
+        var map = readThemeFontFamilyFromForm();
+        settings.themeFontFamily = map;
+        var theme = document.getElementById("bubble_theme").value;
+        settings.fontFamily = getThemeFontFamily({ themeFontFamily: map, bubbleTheme: theme }, theme);
+        preloadPreviewFontFiles(settings.fontFamily);
+      }
+      if (id === "outer_bg_color" || id === "outer_bg_alpha") enableOuterFillCustom();
+      if (id === "board_bg_color" || id === "board_bg_alpha") enableMidFillCustom();
+      if (id === "chat_width" || id === "max_width") {
+        if (eventType === "change") clampChatWidthFields(id);
+        else syncChatWidthMaxAttr();
+      }
+      if (COLOR_INPUT_IDS.indexOf(id) >= 0) syncColorPicker(id);
+      syncPreviewRangeLabel(id);
+    }
+
+    function isLivePreviewControl(el) {
+      if (!el || PREVIEW_SKIP_IDS[el.id]) return false;
+      if (el.id === "bubble_theme") return false;
+      if (el.closest(".preset-sidebar")) return false;
+      if (!el.closest(".chat-page-main")) return false;
+      return el.matches("input, select, textarea");
+    }
+
+    function bindLivePreview() {
+      var root = document.querySelector(".chat-page-main");
+      if (!root) return;
+      function onLivePreviewEvent(e) {
+        var el = e.target;
+        if (!isLivePreviewControl(el)) return;
+        beforeLivePreview(el.id || "", e.type);
+        onSettingsChange();
+      }
+      root.addEventListener("input", onLivePreviewEvent, true);
+      root.addEventListener("change", onLivePreviewEvent, true);
+    }
+
+    bindLivePreview();
+    refreshStylePreview();
+    saveSettings(settings);
+    updateObsUrlDisplay();
+
+    document.getElementById("btn_game_mode").addEventListener("click", function () {
+      var on = !this.classList.contains("active");
+      setGameModeButton(on);
+      onSettingsChange();
+    });
+
+    document.getElementById("btn_show_paw").addEventListener("click", function () {
+      var on = !this.classList.contains("active");
+      setShowPawButton(on);
+      onSettingsChange();
+    });
+
+    document.getElementById("chat_icon_type").addEventListener("change", onSettingsChange);
+
+    document.getElementById("btn_show_box_border").addEventListener("click", function () {
+      var on = !this.classList.contains("active");
+      setShowBoxBorderButton(on);
+      onSettingsChange();
+    });
+    document.getElementById("btn_chat_alternate").addEventListener("click", function () {
+      var on = !this.classList.contains("active");
+      setChatAlternateButton(on);
+      onSettingsChange();
+    });
+
+    document.getElementById("btn_outer_fill_custom").addEventListener("click", function () {
+      if (this.classList.contains("active")) {
+        var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+        syncOuterFillInput(defaultThemeOuterFill(), theme);
+        syncOuterBorderInput(defaultThemeOuterBorder(), theme);
+        syncAllColorPickers();
+        setOuterFillCustomButton(false);
+      } else {
+        setOuterFillCustomButton(true);
+      }
+      syncBoardSettingsUI();
+      onSettingsChange();
+    });
+
+    document.getElementById("btn_theme_mid_layer").addEventListener("click", function () {
+      var on = !this.classList.contains("active");
+      setThemeMidLayerButton(on);
+      syncMidFillFieldsEnabled();
+      onSettingsChange();
+    });
+
+    document.getElementById("btn_mid_fill_custom").addEventListener("click", function () {
+      if (this.classList.contains("active")) {
+        var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+        syncBoardFillInput(defaultThemeBoardFill(), theme);
+        syncMidBorderInput(defaultThemeMidBorder(), theme);
+        syncAllColorPickers();
+        setMidFillCustomButton(false);
+      } else {
+        setMidFillCustomButton(true);
+      }
+      syncMidFillFieldsEnabled();
+      onSettingsChange();
+    });
+
+    document.getElementById("btn_theme_chat_bg").addEventListener("click", function () {
+      var on = !this.classList.contains("active");
+      setThemeChatBgButton(on);
+      syncBoardSettingsUI();
+      onSettingsChange();
+    });
+
+    document.getElementById("btn_nick_colors").addEventListener("click", function () {
+      var on = !this.classList.contains("active");
+      setNickColorsButton(on);
+      syncNickSettingsUI();
+      onSettingsChange();
+    });
+
+    document.getElementById("btn_bubble_reset").addEventListener("click", function () {
+      applyBubbleDefaultsToForm();
+      onSettingsChange();
+    });
+
+    document.getElementById("bubble_theme").addEventListener("change", function () {
+      var mapBg = normalizeThemeChatBg(settings);
+      mapBg[normalizeBubbleTheme(settings.bubbleTheme)] =
+        document.getElementById("btn_theme_chat_bg").classList.contains("active");
+      settings.themeChatBg = mapBg;
+      var mapTitle = normalizeThemeBoardTitle(settings);
+      mapTitle[normalizeBubbleTheme(settings.bubbleTheme)] =
+        String(document.getElementById("board_title").value || "");
+      settings.themeBoardTitle = mapTitle;
+      var mapTitleColor = normalizeThemeBoardTitleColor(settings);
+      mapTitleColor[normalizeBubbleTheme(settings.bubbleTheme)] =
+        document.getElementById("board_title_color").value;
+      settings.themeBoardTitleColor = mapTitleColor;
+      var mapTitleSize = normalizeThemeBoardTitleFontSize(settings);
+      mapTitleSize[normalizeBubbleTheme(settings.bubbleTheme)] =
+        clampBoardTitleFontSize(document.getElementById("board_title_font_size").value, mapTitleSize[normalizeBubbleTheme(settings.bubbleTheme)]);
+      settings.themeBoardTitleFontSize = mapTitleSize;
+      var mapFill = normalizeThemeBoardFill(settings);
+      mapFill[normalizeBubbleTheme(settings.bubbleTheme)] = {
+        color: document.getElementById("board_bg_color").value,
+        alpha: Number(document.getElementById("board_bg_alpha").value)
+      };
+      settings.themeBoardFill = mapFill;
+      var mapOuter = normalizeThemeOuterFill(settings);
+      mapOuter[normalizeBubbleTheme(settings.bubbleTheme)] = {
+        color: document.getElementById("outer_bg_color").value,
+        alpha: Number(document.getElementById("outer_bg_alpha").value)
+      };
+      settings.themeOuterFill = mapOuter;
+      var mapOuterCustom = normalizeThemeOuterFillCustom(settings);
+      mapOuterCustom[normalizeBubbleTheme(settings.bubbleTheme)] =
+        document.getElementById("btn_outer_fill_custom").classList.contains("active");
+      settings.themeOuterFillCustom = mapOuterCustom;
+      var mapOuterBorder = normalizeThemeOuterBorder(settings);
+      mapOuterBorder[normalizeBubbleTheme(settings.bubbleTheme)] = {
+        color: document.getElementById("outer_border_color").value,
+        alpha: Number(document.getElementById("outer_border_alpha").value)
+      };
+      settings.themeOuterBorder = mapOuterBorder;
+      var mapMid = normalizeThemeMidLayer(settings);
+      mapMid[normalizeBubbleTheme(settings.bubbleTheme)] =
+        document.getElementById("btn_theme_mid_layer").classList.contains("active");
+      settings.themeMidLayer = mapMid;
+      var mapMidCustom = normalizeThemeMidFillCustom(settings);
+      mapMidCustom[normalizeBubbleTheme(settings.bubbleTheme)] =
+        document.getElementById("btn_mid_fill_custom").classList.contains("active");
+      settings.themeMidFillCustom = mapMidCustom;
+      var mapMidBorder = normalizeThemeMidBorder(settings);
+      mapMidBorder[normalizeBubbleTheme(settings.bubbleTheme)] = {
+        color: document.getElementById("mid_border_color").value,
+        alpha: Number(document.getElementById("mid_border_alpha").value)
+      };
+      settings.themeMidBorder = mapMidBorder;
+      var mapNickColor = normalizeThemeNickColor(settings);
+      mapNickColor[normalizeBubbleTheme(settings.bubbleTheme)] =
+        document.getElementById("nick_color").value;
+      settings.themeNickColor = mapNickColor;
+      var mapFont = normalizeThemeFontFamily(settings);
+      mapFont[normalizeBubbleTheme(settings.bubbleTheme)] =
+        normalizeFontFamily(document.getElementById("font_family").value);
+      settings.themeFontFamily = mapFont;
+      applyThemePresetToForm(this.value);
+      syncThemeChatBgButton(mapBg);
+      syncBoardTitleInput(mapTitle, this.value);
+      syncBoardTitleColorInput(mapTitleColor, this.value);
+      syncBoardTitleFontSizeInput(mapTitleSize, this.value);
+      syncBoardFillInput(mapFill, this.value);
+      syncMidBorderInput(mapMidBorder, this.value);
+      syncOuterFillInput(mapOuter, this.value);
+      syncOuterBorderInput(mapOuterBorder, this.value);
+      syncOuterFillCustomButton(mapOuterCustom, settings);
+      syncThemeMidLayerButton(mapMid);
+      syncMidFillCustomButton(mapMidCustom, settings);
+      syncMidFillFieldsEnabled();
+      syncThemeNickColorInput(mapNickColor, this.value);
+      syncNickSettingsUI();
+      syncThemeFontInput(mapFont, this.value);
+      syncBoardSettingsUI();
+      refreshColorPresetUI();
+      onSettingsChange();
+    });
+
+    document.getElementById("btn_copy").addEventListener("click", function () {
+      copyObsUrl();
+    });
+
+    var obsUrlInput = document.getElementById("obs_url");
+    obsUrlInput.addEventListener("click", function () { this.select(); });
+    obsUrlInput.addEventListener("focus", function () { this.select(); });
+
+    function updateChzzkChatPopupLink() {
+      var link = document.getElementById("chzzkChatPopupLink");
+      if (!link || !window.BangsongChannel) return;
+      var meta = window.BangsongChannel.getMeta();
+      link.href = meta ? meta.liveUrl : "https://chzzk.naver.com/";
+    }
+    updateChzzkChatPopupLink();
+    window.addEventListener("bangsong-channel-updated", function () {
+      updateChzzkChatPopupLink();
+      updateObsUrlDisplay();
+    });
+    window.addEventListener("bangsong-auth-updated", function () {
+      updateObsUrlDisplay();
+    });
+    if (window.BangsongAuth && BangsongAuth.ready) {
+      BangsongAuth.ready().then(function () {
+        updateObsUrlDisplay();
+      });
+    }
+  </script>
+</body>
+</html>
