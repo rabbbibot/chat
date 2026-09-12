@@ -1,0 +1,93 @@
+/* 중앙 confirm / alert */
+body.bangsong-dialog-open {
+  overflow: hidden;
+}
+
+.bangsong-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.bangsong-dialog[hidden] {
+  display: none !important;
+}
+
+.bangsong-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(2px);
+}
+
+.bangsong-dialog-box {
+  position: relative;
+  width: min(420px, 100%);
+  padding: 1.35rem 1.4rem 1.15rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #171717;
+  color: #e5e5e5;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  font-family: 'Mulmaru', "Malgun Gothic", sans-serif;
+}
+
+.bangsong-dialog-message {
+  margin: 0 0 1.15rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  white-space: pre-line;
+  word-break: keep-all;
+}
+
+.bangsong-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.bangsong-dialog-btn {
+  min-width: 72px;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.bangsong-dialog-btn.ok {
+  border-color: rgba(99, 102, 241, 0.45);
+  background: rgba(99, 102, 241, 0.28);
+}
+
+.bangsong-dialog-btn.cancel {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.bangsong-dialog-btn:hover {
+  filter: brightness(1.08);
+}
+
+html[data-theme="light"] .bangsong-dialog-box {
+  background: #ffffff;
+  color: #18181b;
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme="light"] .bangsong-dialog-btn {
+  border-color: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+html[data-theme="light"] .bangsong-dialog-btn.ok {
+  border-color: rgba(99, 102, 241, 0.35);
+  background: rgba(99, 102, 241, 0.14);
+}

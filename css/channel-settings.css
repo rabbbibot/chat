@@ -1,0 +1,195 @@
+.channel-settings-login-only h2 {
+  margin-bottom: 0.75rem;
+}
+
+.channel-settings-login-only .channel-settings-status {
+  margin-top: 0.75rem;
+}
+
+.channel-settings-login-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  background: var(--point, #6366f1);
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.channel-settings-auth {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.channel-settings-auth.logged-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.channel-settings-auth #bangsongLoginBtn {
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  border: none;
+  background: var(--point, #6366f1);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.92rem;
+}
+
+.channel-settings-auth-hint {
+  margin-top: 0.65rem;
+  font-size: 0.85rem;
+  color: var(--text-muted, #737373);
+}
+
+.channel-settings-panel {
+  width: min(640px, 100%);
+  margin: 0 auto 1.5rem;
+  padding: 1.25rem 1.35rem;
+  background: var(--surface, #171717);
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  border-radius: 16px;
+  text-align: left;
+}
+
+.channel-settings-panel h2 {
+  font-size: 1rem;
+  font-weight: normal;
+  margin-bottom: 0.35rem;
+}
+
+.channel-settings-panel .channel-settings-lead {
+  font-size: 0.88rem;
+  color: var(--text-muted, #737373);
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+.channel-settings-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.channel-settings-row input[type="text"],
+.channel-settings-row input[type="url"] {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.channel-settings-row input:focus {
+  outline: none;
+  border-color: rgba(99, 102, 241, 0.55);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.18);
+}
+
+.channel-settings-row button {
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  background: rgba(99, 102, 241, 0.22);
+  color: inherit;
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.channel-settings-row button:hover {
+  background: rgba(99, 102, 241, 0.32);
+}
+
+.channel-settings-row button.subtle {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.channel-settings-check {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+  font-size: 0.88rem;
+  color: var(--text-muted, #737373);
+  cursor: pointer;
+}
+
+.channel-settings-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
+.channel-settings-status {
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.channel-settings-status.ok { color: #86efac; }
+.channel-settings-status.warn { color: #fbbf24; }
+.channel-settings-status.err { color: #f87171; }
+
+body.obs .channel-settings-panel,
+html.obs .channel-settings-panel,
+body.obs .channel-status-banner,
+html.obs .channel-status-banner {
+  display: none !important;
+}
+
+.channel-status-banner {
+  width: min(640px, 100%);
+  margin: 0 auto 1rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.channel-status-banner a {
+  color: #a5b4fc;
+}
+
+.channel-status-banner.warn {
+  border-color: rgba(251, 191, 36, 0.35);
+  color: #fde68a;
+}
+
+.channel-status-banner.ok {
+  border-color: rgba(74, 222, 128, 0.25);
+  color: #bbf7d0;
+}
+
+.channel-status-banner code {
+  font-size: 0.82em;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.channel-settings-panel.compact {
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+}
+
+.channel-settings-panel.compact h2 {
+  font-size: 0.95rem;
+}
