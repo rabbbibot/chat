@@ -2869,6 +2869,7 @@
     }
 
     function applyColorPalettePreset(key) {
+      if (typeof getColorPalettePresets !== "function") return;
       var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
       var presets = getColorPalettePresets(theme);
       var preset = presets[key];
@@ -2924,6 +2925,7 @@
     function refreshColorPresetUI() {
       var root = document.getElementById("color_preset_list");
       if (!root) return;
+      if (typeof getColorPalettePresets !== "function") return;
       var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
       var presets = getColorPalettePresets(theme);
       root.innerHTML = "";

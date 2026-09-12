@@ -50,8 +50,9 @@
 }
 
 .channel-settings-panel {
-  width: min(640px, 100%);
-  margin: 0 auto 1.5rem;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 0 1.5rem;
   padding: 1.25rem 1.35rem;
   background: var(--surface, #171717);
   border: 1px solid rgba(99, 102, 241, 0.28);
