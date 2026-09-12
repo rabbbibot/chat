@@ -168,7 +168,6 @@
     }
     var urls = [
       "https://api.chzzk.naver.com/polling/v2/channels/" + channelId + "/live-status?_t=" + Date.now(),
-      "https://api.chzzk.naver.com/service/v1/channels/" + channelId + "/live-status?_t=" + Date.now(),
     ];
     var lastErr = null;
     for (var i = 0; i < urls.length; i++) {

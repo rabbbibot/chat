@@ -1469,6 +1469,17 @@
           <button type="button" class="btn" id="btn_copy">URL 복사</button>
           <p class="copy-status" id="copy_status" aria-live="polite"></p>
         </section>
+
+        <section class="panel">
+          <h2>위플랩용 CSS</h2>
+          <p class="field-hint" style="margin-top:0">
+            SOOP(아프리카TV) 네이티브 채팅창을 위플랩에서 꾸밀 때 쓰는 CSS입니다. 현재 선택한 테마(<span id="wiplab_theme_label">파스텔</span>)에 맞춰 변환합니다.
+          </p>
+          <button type="button" class="btn" id="btn_wiplab_export">위플랩용 CSS 변환</button>
+          <button type="button" class="btn subtle" id="btn_wiplab_copy" style="margin-left:6px">복사</button>
+          <textarea id="wiplab_css_output" readonly rows="6" style="width:100%;margin-top:10px;resize:vertical;background:rgba(0,0,0,0.25);color:inherit;border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px;font-family:monospace;font-size:12px;display:none;"></textarea>
+          <p class="copy-status" id="wiplab_status" aria-live="polite"></p>
+        </section>
       </div>
         </div>
 
@@ -1484,6 +1495,7 @@
   </div>
   <script src="js/channel-settings.js?v=1"></script>
   <script src="js/channel-url-panel.js?v=1"></script>
+  <script src="js/wiplab-export.js?v=1"></script>
   <script src="assets/color-palette-presets.js?v=1"></script>
   <script src="assets/magical-theme-vars.js?v=1"></script>
   <script src="assets/animal-theme-vars.js?v=1"></script>
@@ -4463,7 +4475,58 @@
       syncBoardSettingsUI();
       refreshColorPresetUI();
       onSettingsChange();
+      updateWiplabThemeLabel();
     });
+
+    function updateWiplabThemeLabel() {
+      var label = document.getElementById("wiplab_theme_label");
+      if (!label || !window.WiplabExport) return;
+      var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+      var def = window.WiplabExport.THEMES[theme];
+      label.textContent = (def && def.label) || theme;
+      var out = document.getElementById("wiplab_css_output");
+      if (out && !out.hidden) out.style.display = "none";
+      var status = document.getElementById("wiplab_status");
+      if (status) status.textContent = "";
+    }
+    updateWiplabThemeLabel();
+
+    (function initWiplabExport() {
+      var exportBtn = document.getElementById("btn_wiplab_export");
+      var copyBtn = document.getElementById("btn_wiplab_copy");
+      var out = document.getElementById("wiplab_css_output");
+      var status = document.getElementById("wiplab_status");
+      if (!exportBtn || !copyBtn || !out || !window.WiplabExport) return;
+
+      exportBtn.addEventListener("click", function () {
+        var theme = normalizeBubbleTheme(document.getElementById("bubble_theme").value);
+        out.value = window.WiplabExport.generate(theme);
+        out.style.display = "block";
+        status.textContent = "위플랩 CSS가 생성되었습니다. 아래에서 복사해서 붙여넣으세요.";
+        status.className = "copy-status";
+      });
+
+      copyBtn.addEventListener("click", function () {
+        if (!out.value) {
+          status.textContent = "먼저 \"위플랩용 CSS 변환\"을 눌러 생성해 주세요.";
+          status.className = "copy-status is-error";
+          return;
+        }
+        function finish(ok) {
+          status.textContent = ok ? "CSS를 클립보드에 복사했습니다." : "복사 실패 — 아래 칸에서 직접 선택해 복사해 주세요.";
+          status.className = "copy-status" + (ok ? "" : " is-error");
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(out.value).then(function () { finish(true); }).catch(function () {
+            out.select();
+            finish(document.execCommand("copy"));
+          });
+        } else {
+          out.select();
+          finish(document.execCommand("copy"));
+        }
+      });
+    })();
 
     document.getElementById("btn_copy").addEventListener("click", function () {
       copyObsUrl();
