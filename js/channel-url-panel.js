@@ -18,17 +18,21 @@
       status.className = "channel-settings-status" + (level ? " " + level : "");
     }
 
+    function kindLabel(kind) {
+      return kind === "chat" ? "채팅 링크" : "채널 ID";
+    }
+
     function prefill() {
       var rec = window.BangsongChannel.loadStoredRecord();
-      var fromQuery = window.BangsongChannel.getChannelFromQuery();
+      var fromQuery = window.BangsongChannel.getChannelInfoFromQuery();
       if (fromQuery) {
-        input.value = fromQuery;
-        setStatus("URL의 ?channel= 파라미터로 연결됨: " + fromQuery, "ok");
+        input.value = fromQuery.id;
+        setStatus("URL 파라미터로 연결됨 · " + kindLabel(fromQuery.kind) + ": " + fromQuery.id, "ok");
         return;
       }
       if (rec && rec.channelId) {
         input.value = rec.sourceInput || rec.channelId;
-        setStatus("연결됨 · 채널 ID: " + rec.channelId, "ok");
+        setStatus("연결됨 · " + kindLabel(rec.kind) + ": " + rec.channelId, "ok");
         return;
       }
       setStatus("아직 연결된 채널이 없습니다.", "warn");
@@ -40,7 +44,7 @@
         setStatus(result.error || "치지직 채팅/방송 URL을 확인해 주세요.", "err");
         return;
       }
-      setStatus("연결됨 · 채널 ID: " + result.record.channelId, "ok");
+      setStatus("연결됨 · " + kindLabel(result.record.kind) + ": " + result.record.channelId, "ok");
       dispatchChannelUpdated();
     }
 

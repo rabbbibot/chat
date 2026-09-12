@@ -192,6 +192,13 @@
     if (!channelId) {
       throw new Error("치지직 채널이 설정되지 않았습니다. 홈에서 방송 URL을 입력해 주세요.");
     }
+    /* /chat/{id} 링크로 받은 값은 이미 채팅채널ID — channelId 기반 조회 없이 바로 사용 */
+    try {
+      if (global.BangsongChannel && global.BangsongChannel.resolveChannelKind &&
+          global.BangsongChannel.resolveChannelKind() === "chat") {
+        return channelId;
+      }
+    } catch (e) {}
     var content = await fetchLiveStatusContent();
     var cid = content && content.chatChannelId;
     if (cid) {

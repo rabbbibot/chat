@@ -1003,14 +1003,47 @@
   <link rel="stylesheet" href="css/bangsong-dialog.css?v=1">
   <script src="js/bangsong-dialog.js?v=1"></script>
   <link rel="stylesheet" href="css/channel-settings.css?v=2">
+  <style>
+    .usage-mode-tabs {
+      display: flex; gap: 8px; margin: 0 0 1.25rem; max-width: 720px;
+    }
+    .usage-mode-tab {
+      flex: 1; padding: 10px 14px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04); color: var(--text-muted, #a0a0a0);
+      font: inherit; font-size: 0.92rem; cursor: pointer;
+    }
+    .usage-mode-tab.is-active {
+      background: rgba(99, 102, 241, 0.22);
+      border-color: rgba(99, 102, 241, 0.55);
+      color: var(--text, #e5e5e5);
+    }
+    .mode-badge {
+      font-size: 0.7rem; font-weight: normal; color: #a5b4fc;
+      background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35);
+      border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: middle;
+    }
+  </style>
 </head>
 <body>
   <div class="layout">
     <main class="main">
-      <section class="channel-settings-panel" aria-label="채팅 연결">
-        <h2>채팅 연결</h2>
+      <h1 class="page-title">커스텀 채팅</h1>
+      <p class="lead">
+        <a href="https://chzzk.naver.com/" id="chzzkChatPopupLink" target="_blank" rel="noopener">치지직 방송 채팅</a>과
+        <strong>같은 실시간 채팅</strong>을 받아, 원하는 스타일로 꾸민 뒤 <strong>OBS</strong> 또는 <strong>위플랩</strong>(SOOP 네이티브 채팅창)에 띄웁니다.
+        아래 스타일 설정은 둘 다 공통으로 쓰이고, 마지막에 어느 쪽으로 내보낼지만 고르면 됩니다.
+      </p>
+
+      <div class="usage-mode-tabs" role="tablist" aria-label="사용 방식">
+        <button type="button" class="usage-mode-tab is-active" id="mode_tab_obs" role="tab" aria-selected="true">OBS로 쓰기 (치지직 오버레이)</button>
+        <button type="button" class="usage-mode-tab" id="mode_tab_wiplab" role="tab" aria-selected="false">위플랩으로 쓰기 (SOOP 채팅창)</button>
+      </div>
+
+      <section class="channel-settings-panel usage-mode-panel" id="mode_panel_obs" aria-label="채팅 연결">
+        <h2>채팅 연결 <span class="mode-badge">OBS 전용</span></h2>
         <p class="channel-settings-lead">
-          치지직 채팅/방송 URL을 입력하면 채널을 자동으로 인식합니다. 로그인은 필요하지 않습니다.<br>
+          치지직 채팅/방송 URL을 입력하면 채널을 자동으로 인식합니다. 로그인은 필요하지 않습니다. (위플랩만 쓰실 거면 이 단계는 필요 없습니다.)<br>
           예: <code>https://chzzk.naver.com/chat/채널ID</code>, <code>https://chzzk.naver.com/live/채널ID</code>
         </p>
         <div class="channel-settings-row">
@@ -1019,11 +1052,6 @@
         </div>
         <div class="channel-settings-status" id="channel_url_status"></div>
       </section>
-      <h1 class="page-title">커스텀 채팅</h1>
-      <p class="lead">
-        <a href="https://chzzk.naver.com/" id="chzzkChatPopupLink" target="_blank" rel="noopener">치지직 방송 채팅</a>과
-        <strong>같은 실시간 채팅</strong>을 받아, 원하는 스타일로 꾸민 뒤 OBS에 띄웁니다.
-      </p>
 
       <div class="chat-page-layout">
         <div class="chat-page-main">
@@ -1460,9 +1488,9 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel usage-mode-panel" id="mode_panel_obs_url">
           <div class="obs-url-head">
-            <h2>URL</h2>
+            <h2>URL <span class="mode-badge">OBS 전용</span></h2>
             <a id="obs_open_link" class="obs-open-link" href="#" target="_blank" rel="noopener">OBS 링크</a>
           </div>
           <input type="text" readonly class="obs-url" id="obs_url" aria-label="OBS URL">
@@ -1470,10 +1498,10 @@
           <p class="copy-status" id="copy_status" aria-live="polite"></p>
         </section>
 
-        <section class="panel">
-          <h2>위플랩용 CSS</h2>
+        <section class="panel usage-mode-panel" id="mode_panel_wiplab" hidden>
+          <h2>위플랩용 CSS <span class="mode-badge">위플랩 전용</span></h2>
           <p class="field-hint" style="margin-top:0">
-            SOOP(아프리카TV) 네이티브 채팅창을 위플랩에서 꾸밀 때 쓰는 CSS입니다. 현재 선택한 테마(<span id="wiplab_theme_label">파스텔</span>)에 맞춰 변환합니다.
+            SOOP(아프리카TV) 네이티브 채팅창을 위플랩에서 꾸밀 때 쓰는 CSS입니다. 채널 연결 없이 테마만 고르면 됩니다. 현재 선택한 테마(<span id="wiplab_theme_label">파스텔</span>)에 맞춰 변환합니다.
           </p>
           <button type="button" class="btn" id="btn_wiplab_export">위플랩용 CSS 변환</button>
           <button type="button" class="btn subtle" id="btn_wiplab_copy" style="margin-left:6px">복사</button>
@@ -1493,8 +1521,8 @@
       </div>
     </main>
   </div>
-  <script src="js/channel-settings.js?v=1"></script>
-  <script src="js/channel-url-panel.js?v=1"></script>
+  <script src="js/channel-settings.js?v=2"></script>
+  <script src="js/channel-url-panel.js?v=2"></script>
   <script src="js/wiplab-export.js?v=1"></script>
   <script src="assets/color-palette-presets.js?v=1"></script>
   <script src="assets/magical-theme-vars.js?v=1"></script>
@@ -3728,13 +3756,22 @@
 
     function resolveObsChannelId(me) {
       me = me || (window.BangsongAuth && BangsongAuth.getMe && BangsongAuth.getMe());
+      if (me && me.loggedIn && me.channelId) return me.channelId;
       return (
-        (me && me.loggedIn && me.channelId) ||
         (window.BangsongChannel && BangsongChannel.getChannelFromQuery && BangsongChannel.getChannelFromQuery()) ||
         (window.BangsongChannel && BangsongChannel.resolveChannelId && BangsongChannel.resolveChannelId()) ||
         (window.BangsongChannel && BangsongChannel.getStoredChannelId && BangsongChannel.getStoredChannelId()) ||
         null
       );
+    }
+
+    function resolveObsChannelKind(me) {
+      me = me || (window.BangsongAuth && BangsongAuth.getMe && BangsongAuth.getMe());
+      if (me && me.loggedIn && me.channelId) return "live";
+      if (window.BangsongChannel && BangsongChannel.resolveChannelKind) {
+        return BangsongChannel.resolveChannelKind() || "live";
+      }
+      return "live";
     }
 
     /** OBS 브라우저 소스는 일반 브라우저와 localStorage를 공유하지 않음 → URL 해시로 설정 전달 */
@@ -3756,7 +3793,10 @@
       var base = overlayBaseUrl();
       var params = ["obs=1"];
       var channelId = resolveObsChannelId(me);
-      if (channelId) params.push("channel=" + encodeURIComponent(String(channelId).toLowerCase()));
+      if (channelId) {
+        var paramKey = resolveObsChannelKind(me) === "chat" ? "chatChannel" : "channel";
+        params.push(paramKey + "=" + encodeURIComponent(String(channelId).toLowerCase()));
+      }
       if (window.BangsongAuth && BangsongAuth.getObsKey) {
         var obsKey = BangsongAuth.getObsKey();
         if (obsKey) params.push("k=" + encodeURIComponent(obsKey));
@@ -4191,7 +4231,10 @@
       if (tab) {
         var previewParams = ["ui=1"];
         var channelId = resolveObsChannelId(me);
-        if (channelId) previewParams.push("channel=" + encodeURIComponent(String(channelId).toLowerCase()));
+        if (channelId) {
+          var previewParamKey = resolveObsChannelKind(me) === "chat" ? "chatChannel" : "channel";
+          previewParams.push(previewParamKey + "=" + encodeURIComponent(String(channelId).toLowerCase()));
+        }
         tab.href = overlayBaseUrl() + "?" + previewParams.join("&");
       }
     }
@@ -4526,6 +4569,30 @@
           finish(document.execCommand("copy"));
         }
       });
+    })();
+
+    (function initUsageModeTabs() {
+      var tabObs = document.getElementById("mode_tab_obs");
+      var tabWiplab = document.getElementById("mode_tab_wiplab");
+      var panels = [
+        { mode: "obs", el: document.getElementById("mode_panel_obs") },
+        { mode: "obs", el: document.getElementById("mode_panel_obs_url") },
+        { mode: "wiplab", el: document.getElementById("mode_panel_wiplab") }
+      ];
+      if (!tabObs || !tabWiplab) return;
+
+      function setMode(mode) {
+        panels.forEach(function (p) {
+          if (p.el) p.el.hidden = p.mode !== mode;
+        });
+        tabObs.classList.toggle("is-active", mode === "obs");
+        tabObs.setAttribute("aria-selected", mode === "obs" ? "true" : "false");
+        tabWiplab.classList.toggle("is-active", mode === "wiplab");
+        tabWiplab.setAttribute("aria-selected", mode === "wiplab" ? "true" : "false");
+      }
+
+      tabObs.addEventListener("click", function () { setMode("obs"); });
+      tabWiplab.addEventListener("click", function () { setMode("wiplab"); });
     })();
 
     document.getElementById("btn_copy").addEventListener("click", function () {
