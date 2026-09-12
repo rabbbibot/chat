@@ -4194,11 +4194,11 @@
           setCopyStatus("URL을 만들 수 없습니다.", true);
           return;
         }
-        if (!/[?&]channel=/.test(url)) {
+        if (!/[?&](channel|chatChannel)=/.test(url)) {
           if (btn) btn.disabled = false;
-          setCopyStatus("채널 정보 없음 — 로그인 또는 방송 URL 설정 후 다시 시도", true);
+          setCopyStatus("채널 정보 없음 — 위에서 채팅 URL을 먼저 연결해 주세요", true);
           if (window.BangsongDialog) {
-            BangsongDialog.alert("먼저 치지직 로그인을 진행하거나 홈에서 방송 URL을 저장해 주세요.\nOBS URL에 채널 정보(channel=)가 포함되어야 합니다.");
+            BangsongDialog.alert("먼저 위쪽 \"채팅 연결\"에 치지직 채팅/방송 URL을 입력해 주세요.\nOBS URL에 채널 정보(channel= 또는 chatChannel=)가 포함되어야 합니다.");
           }
           return;
         }
